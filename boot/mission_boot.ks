@@ -1,5 +1,5 @@
 LOCAL modules IS List().
-LOCAL mission IS "mission1".
+LOCAL mission IS "mission2".
 
 function bootConsole {
   parameter msg.
