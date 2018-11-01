@@ -33,6 +33,8 @@ FOR module in modules {
 }
 compileModule("missions/" + mission).
 
+COMPILE "0:/mission_ui.ks" TO "1:/mission_ui.ksm".
+
 compileConsole("All files updated.").
 
 SWITCH TO CORE:VOLUME.

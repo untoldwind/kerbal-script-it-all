@@ -1,5 +1,5 @@
-LOCAL modules IS List().
-LOCAL mission IS "mission6".
+LOCAL modules IS List("core", "orbit").
+LOCAL mission IS "mission9".
 
 function bootConsole {
   parameter msg.
@@ -15,12 +15,14 @@ WAIT 1.
 bootConsole("Attemping to connect to KSC...").
 
 IF SHIP:STATUS = "PRELAUNCH" {
+    bootConsole("At launch site...").
+
     brakes on. // Useful for planes
 
     runpath("0:/compile", modules, mission).
-    runpath("0:/launch_ui", mission).
 } ELSE IF HOMECONNECTION:ISCONNECTED {
-    // Potentially run an update script
-} ELSE {
-    // Not sure what to do here
-}
+    bootConsole("Connected, performing update ...").
+    runpath("0:/compile", modules, mission).
+} 
+
+runpath("/mission_ui", mission).
