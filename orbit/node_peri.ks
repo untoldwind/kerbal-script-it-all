@@ -4,7 +4,11 @@
 //   alt: The desired new periapsis
 //   nodetime: Timestamp of the manuvering node (Default: At the apoapsis)
 
-parameter alt.
-parameter nodetime is TIME:SECONDS + ETA:APOAPSIS.
+RUNONCEPATH("/orbit/node_alt").
 
-RUNPATH("/orbit/node_alt", alt, nodetime).
+function orbitNodePeri {
+    parameter alt.
+    parameter nodetime is TIME:SECONDS + ETA:APOAPSIS.
+
+    orbitNodeAlt(alt, nodetime).
+}
