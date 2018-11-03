@@ -36,3 +36,5 @@ SET SHIP:CONTROL:PILOTMAINTHROTTLE TO 0.
 STAGE.
 
 PRINT "End of program. You're on your own now: " + SHIP:CREW[0]:NAME.
+
+updateMissionState("done").
