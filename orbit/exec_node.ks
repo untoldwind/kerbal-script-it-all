@@ -28,47 +28,22 @@ LOCK STEERING to steerDir.
 LOCAL burnTime IS burnTimeForDv(nn:DELTAV:MAG).
 LOCAL dt IS burnTime/2.
 
-
-LOCAL warpLoop IS 2.
-until false {
-	// If have time, wait to ship almost align with maneuver node.
-	// If have little time, wait at least to ship face in general direction of node
-	// This prevents backwards burns, but still allows steering via engine thrust.
-	// If ship is not rotating for some reason, will proceed anyway. (Maybe only torque source is engine gimbal?)
+// If have time, wait to ship almost align with maneuver node.
+// If have little time, wait at least to ship face in general direction of node
+// This prevents backwards burns, but still allows steering via engine thrust.
+// If ship is not rotating for some reason, will proceed anyway. (Maybe only torque source is engine gimbal?)
+LOCAL warped IS false.
+UNTIL utilIsShipFacing(steerDir, node_bestFacing, 0.5) or
+	nn:ETA <= dt and utilIsShipFacing(steerDir, node_okFacing, 5) or
+	SHIP:angularvel:mag < 0.0001 and RCS = true
+{
+	IF SHIP:angularvel:mag < 0.01 RCS on.
+	IF not warped { set warped to true. physWarp(1). }
 	WAIT 0.
-	LOCAL warped IS false.
-	UNTIL utilIsShipFacing(steerDir, node_bestFacing, 0.5) or
-		nn:ETA <= dt and utilIsShipFacing(steerDir, node_okFacing, 5) or
-		SHIP:angularvel:mag < 0.0001 and RCS = true
-	{
-		IF SHIP:angularvel:mag < 0.01 RCS on.
-		IF not warped { set warped to true. physWarp(1). }
-		WAIT 0.
-	}
-	if warped resetWarp().
-	if warpLoop = 0 break.
-	if warpLoop > 1 {
-		if (warpSeconds(nn:eta - dt - 60) > 600 and nodeCreator:istype("delegate")) {
-		//	recreate node if warped more than 10 minutes and we have node creator delegate
-			UNLOCK steering. // release references before deleting nodes
-			UNLOCK steerDir.
-			SET nn to false.
-			utilRemoveNodes().
-			nodeCreator().
-			wait 0.
-			SET nn to nextnode.
-			SET burnTime to burnTimeForDv(nn:deltav:mag).
-			SET dt to burnTime/2.
-			SAS off.
-			LOCK steerDir to LOOKDIRUP(nn:DELTAV, POSITIONAT(SHIP, TIME:SECONDS + nn:ETA) - BODY:POSITION).
-			LOCK STEERING to steerDir.
-		}
-		SET warpLoop to 1.
-	} else {
-		warpSeconds(nn:eta - dt - 10).
-		break.
-	}
 }
+if warped resetWarp().
+
+warpSeconds(nn:eta - dt - 10).
 
 LOCAL dv0 is nn:DELTAV.
 LOCAL dvMin is dv0:mag.

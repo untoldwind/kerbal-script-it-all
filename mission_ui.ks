@@ -10,6 +10,10 @@ GLOBAL FUNCTION updateMissionState {
     SET mission_state TO state.
 
     WRITEJSON(store, "/current_state.json").
+
+    IF kUniverse:CANQUICKSAVE {
+         kUniverse:QUICKSAVE().
+    }
 }
 
 FUNCTION readMissionState {
@@ -22,6 +26,8 @@ FUNCTION readMissionState {
 }
 
 SET mission_state TO readMissionState().
+
+CLEARGUIS().
 
 LOCAL gui IS GUI(200).
 LOCAL missionBox IS gui:ADDHBOX().

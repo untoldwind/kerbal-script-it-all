@@ -1,3 +1,6 @@
+GLOBAL ui_debug is true. 
+GLOBAL logconsole is false.
+
 function uiConsole {
   parameter prefix.
   parameter msg.
@@ -57,4 +60,13 @@ FUNCTION uiAlarm {
               NOTE("A4",  0.2,  0.25)
           )
       ).
+}
+
+function uiDebug {
+  parameter msg.
+
+  if ui_debug {
+    uiConsole("Debug", msg).
+    hudtext(msg, 3, 3, 24, WHITE, false).
+  }
 }

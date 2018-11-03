@@ -8,6 +8,7 @@ parameter targetApoapsis is 90000.
 parameter launchHeading is 90.
 
 RUNONCEPATH("/core/lib_staging").
+RUNONCEPATH("/core/lib_parts").
 
 // Starting/ending height of gravity turn
 GLOBAL launch_gt0 is BODY:ATM:HEIGHT * 0.007.
@@ -19,10 +20,6 @@ function ascentSteering {
 	LOCAL gtPct is MIN(1, MAX(0, (SHIP:ALTITUDE - launch_gt0) / (launch_gt1 - launch_gt0))).
     // Ideal gravity-turn azimuth (inclination) and facing at present altitude.
 	LOCAL pitch is ARCCOS(gtPct).
-
-	IF pitch > 80 {
-		SET pitch TO 80.
-	}
 
 	return heading(launchHeading, pitch).
 }
@@ -70,3 +67,5 @@ LOCK STEERING TO SHIP:PROGRADE.
 WAIT UNTIL SHIP:ALTITUDE > BODY:ATM:HEIGHT * 0.9.
 
 UNLOCK ALL.
+
+partsExtendAntennas().
