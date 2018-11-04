@@ -1,7 +1,7 @@
 RUNONCEPATH("/core/lib_parts").
 RUNONCEPATH("/core/lib_util").
 RUNONCEPATH("/core/lib_staging").
-RUNONCEPATH("/core/launch_ascent").
+RUNONCEPATH("/atmo/launch_ascent").
 RUNONCEPATH("/orbit/circ").
 RUNONCEPATH("/orbit/node_hoh").
 RUNONCEPATH("/orbit/exec_node").
@@ -13,7 +13,7 @@ PRINT mission_state.
 IF mission_state = "launch" {
     LIGHTS ON.
     PRINT "Launch sequence".
-    coreLaunchAscent().
+    atmoLaunchAscent().
 
     updateMissionState("circulating").
 }

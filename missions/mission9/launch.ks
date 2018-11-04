@@ -1,4 +1,5 @@
-RUNONCEPATH("/core/launch_ascent").
+RUNONCEPATH("/atmo/launch_ascent").
+RUNONCEPATH("/atmo/deorbit_simple").
 RUNONCEPATH("/orbit/circ").
 
 PRINT mission_state.
@@ -6,7 +7,7 @@ PRINT mission_state.
 IF mission_state = "launch" {
     LIGHTS ON.
     PRINT "Launch sequence".
-    coreLaunchAscent().
+    atmoLaunchAscent().
 
     updateMissionState("circulating").
 }
@@ -19,7 +20,7 @@ IF mission_state = "circulating" {
 
     updateMissionState("inorbit").
 } ELSE IF mission_state = "inorbit" {
-    RUNPATH("/core/fall_to_surface").
+    atmoDeorbitSimple().
 
     updateMissionState("done").
 

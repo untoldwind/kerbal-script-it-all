@@ -1,5 +1,5 @@
-LOCAL modules IS List("core", "orbit").
-LOCAL mission IS "mission14".
+LOCAL modules IS List("core", "atmo", "orbit", "rendezvous").
+LOCAL mission IS "mission15".
 
 function bootConsole {
   parameter msg.
@@ -23,6 +23,9 @@ IF SHIP:STATUS = "PRELAUNCH" {
 } ELSE IF HOMECONNECTION:ISCONNECTED {
     bootConsole("Connected, performing update ...").
     runpath("0:/compile", modules, mission).
-} 
+} ELSE {
+    bootConsole("No connection will continue with stored version").
+}
+bootConsole(round(core:volume:freespace/1024, 1) + "/" + round(core:volume:capacity/1024) + " kB free").
 
 runpath("/mission_ui", mission).

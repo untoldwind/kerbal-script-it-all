@@ -8,7 +8,7 @@
 RUNONCEPATH("/core/lib_staging").
 RUNONCEPATH("/core/lib_parts").
 
-function coreLaunchAscent {
+function atmoLaunchAscent {
 	parameter targetApoapsis is 90000.
 	parameter launchHeading is 90.
 	// Starting/ending height of gravity turn
