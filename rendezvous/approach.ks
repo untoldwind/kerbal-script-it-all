@@ -51,7 +51,7 @@ function rendezvousApproach {
       lock throttle to 0.
     }
     // Finish with RCS 
-    utilRCSCancelVelocity(vel@).
+    //utilRCSCancelVelocity(vel@).
     unlock throttle.
     unlock steering.
   }
