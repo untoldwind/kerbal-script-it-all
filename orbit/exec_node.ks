@@ -26,7 +26,7 @@ function orbitExecNode {
 	LOCK steerDir to LOOKDIRUP(nn:DELTAV, POSITIONAT(SHIP, TIME:SECONDS + nn:ETA) - BODY:POSITION).
 	LOCK STEERING to steerDir.
 
-	LOCAL burnTime IS burnTimeForDv(nn:DELTAV:MAG).
+	LOCAL burnTime IS stagingBurnTimeForDv(nn:DELTAV:MAG).
 	LOCAL dt IS burnTime/2.
 
 	// If have time, wait to ship almost align with maneuver node.

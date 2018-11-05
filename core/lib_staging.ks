@@ -20,7 +20,7 @@ function stagingCheck {
 }
 
 // calculate burn time for maneuver needing provided deltaV
-function burnTimeForDv {
+function stagingBurnTimeForDv {
 	parameter dv.
 	// For now a rough estimate will sufice
 	return SHIP:MASS * dv / SHIP:AVAILABLETHRUST.

@@ -8,6 +8,7 @@ RUNONCEPATH("/core/lib_util").
 function orbitNodeInc {
     parameter inclination is 0.
     
+    local t0 is time:seconds.
     LOCAL i0 is ORBIT:inclination.
     LOCAL di IS inclination-i0.
     LOCAL ta to -ORBIT:ARGUMENTOFPERIAPSIS.

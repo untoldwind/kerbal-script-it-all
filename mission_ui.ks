@@ -68,4 +68,6 @@ UNTIL mission_state = "done" {
     runpath("/missions/" + mission + "/launch").
 }
 
-PRINT "End of program. You're on your own now: " + SHIP:CREW[0]:NAME.
+IF SHIP:CREW:LENGTH > 0 {
+    PRINT "End of program. You're on your own now: " + SHIP:CREW[0]:NAME.
+}
