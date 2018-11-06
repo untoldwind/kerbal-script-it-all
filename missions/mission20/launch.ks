@@ -9,7 +9,7 @@ RUNONCEPATH("/core/lib_util").
 IF mission_state = "launch" {
     LIGHTS ON.
     PRINT "Launch sequence".
-    atmoLaunchAscent(90000, -90).
+    atmoLaunchAscent(90000).
     orbitCirc().
 
     updateMissionState("inorbit").
