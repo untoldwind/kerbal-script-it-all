@@ -13,7 +13,7 @@ function vacLaunchAscent {
 	parameter launchHeading is 90.
 	// Starting/ending height of gravity turn
 	LOCAL launch_gt0 is SHIP:ALTITUDE.
-	LOCAL launch_gt1 is targetApoapsis * 0.8. 
+	LOCAL launch_gt1 is targetApoapsis * 0.3. 
 
     UNLOCK all.
 
