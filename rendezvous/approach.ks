@@ -127,7 +127,7 @@ function rendezvousApproach {
 
   until IsNearTarget {
 
-    until GoingTowardsTarget {
+    until GoingTowardsTarget or IsNearTarget {
 
       // If ship is in nearby vicinty of target, or going away from it, cancel relative speed.
       if target:position:mag / vel:mag < 30 or vang(target:position,vel) > 90 { 
