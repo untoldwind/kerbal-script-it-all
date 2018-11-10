@@ -6,11 +6,8 @@ function partsDoEvent {
 	
 	set event to "^"+event+"\b". // match first word
 	local success is false.
-	local maxStage is -1.
-	if tag = "" and (defined stagingMaxStage)
-		set maxStage to stagingMaxStage-1. //see lib_staging
 	for p in ship:partsTagged(tag) {
-		if p:stage >= maxStage and p:modules:contains(module) {
+		if p:modules:contains(module) {
 			local m is p:getModule(module).
 			for e in m:allEventNames() {
 				if e:matchesPattern(event) {
@@ -25,12 +22,18 @@ function partsDoEvent {
 
 function partsExtendSolarPanels {
 	parameter tag is "".
-	return partsDoEvent("ModuleDeployableSolarPanel", "extend", tag).
+	if not partsDoEvent("ModuleDeployableSolarPanel", "extend", tag) {
+		return partsDoEvent("KopernicusSolarPanel", "extend", tag).
+	}
+	return false.
 }
 
 function partsRetractSolarPanels {
 	parameter tag is "".
-	return partsDoEvent("ModuleDeployableSolarPanel", "retract", tag).
+	if not partsDoEvent("ModuleDeployableSolarPanel", "retract", tag) {
+		return partsDoEvent("KopernicusSolarPanel", "retract", tag).
+	}
+	return false.
 }
 
 function partsExtendAntennas {

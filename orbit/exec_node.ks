@@ -35,8 +35,7 @@ function orbitExecNode {
 	// If ship is not rotating for some reason, will proceed anyway. (Maybe only torque source is engine gimbal?)
 	LOCAL warped IS false.
 	UNTIL utilIsShipFacing(steerDir, node_bestFacing, 0.5) or
-		nn:ETA <= dt and utilIsShipFacing(steerDir, node_okFacing, 5) or
-		SHIP:angularvel:mag < 0.0001 and RCS = true
+		nn:ETA <= dt and utilIsShipFacing(steerDir, node_okFacing, 5)
 	{
 		IF SHIP:angularvel:mag < 0.01 RCS on.
 		IF not warped { set warped to true. physWarp(1). }

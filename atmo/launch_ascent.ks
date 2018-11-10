@@ -70,4 +70,5 @@ function atmoLaunchAscent {
 	UNLOCK ALL.
 
 	partsExtendAntennas().
+	partsExtendSolarPanels().
 }
