@@ -20,7 +20,7 @@ function vacLand {
         SET LandingSite to LATLNG(LandLat,LandLng).
 
         //Define the deorbit periapsis
-        local DeorbitRad to max(5000+ship:body:radius,(ship:body:radius*1.02 + LandingSite:terrainheight)).
+        local DeorbitRad to max(6000+ship:body:radius,(ship:body:radius*1.02 + LandingSite:terrainheight)).
 
         // Find a phase angle for the landing
         // The landing burning is like a Hohmann transfer, but to an orbit close to the body surface
@@ -59,6 +59,12 @@ function vacLand {
         orbitExecNode(). 
         uiDebug("Deorbit: Deorbit burn done"). 
         wait 5. // Let's have some time to breath and look what's happening 
+
+        UNTIL STAGE:NUMBER = landStage {
+            WAIT UNTIL STAGE:READY.
+            STAGE.
+        }
+        WAIT 5.
 
         // Brake the ship to finally deorbit.
         SET BreakingDeltaV to VELOCITYAT(ship,time:seconds+eta:periapsis):orbit:mag.
@@ -110,7 +116,7 @@ function vacLand {
             Set DFactor TO 0.08. // How much the target position matters when steering. Higher values make landing more precise, but also may make the ship land with too much horizontal speed.
             SET TargetVector to vxcl(SHIP:UP:VECTOR,LandingSite:Position*DFactor).
 
-            IF radarAlt < 1000 {
+            IF radarAlt < 1500 {
                 SET TargetVector to V(0,0,0).
             }
 
