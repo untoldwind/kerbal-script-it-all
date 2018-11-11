@@ -25,7 +25,7 @@ function orbitNodeReturnFromMoon {
     uiDebug( "T+" + round(missiontime) + " Hyperbolic excess: " + round(vhe) + " m/s").
     set aeject to -90.
     if body:name = "Minmus" {
-        set aeject to -93.
+        set aeject to -90.
     }
     uiDebug( "T+" + round(missiontime) + " Ejection angle " + round(aeject) + " deg").
 
