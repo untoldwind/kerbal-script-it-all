@@ -1,4 +1,5 @@
 RUNONCEPATH("/mainframe/orbit").
+RUNONCEPATH("/mainframe/transfer").
 RUNONCEPATH("/core/lib_ui").
 
 function mainframeEnsure {

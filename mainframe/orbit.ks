@@ -37,3 +37,52 @@ function mainframeMatchVelocities {
 
     mainframeExecNode().
 }
+
+function mainframeCorrectTargetPeriapsis {
+    parameter targetPeriapsis.
+
+    uiConsole("MAINFRAME", "Correct Target Periapsis").
+    if not HASTARGET or TARGET:TYPENAME <> "Body" {
+        uiError("MAINFRAME", "No target body").
+        return.
+    }
+    utilRemoveNodes().
+
+    ADD ADDONS:MainFrame:MANEUVERS:CHEAPEST_CORRECTION_BODY(TARGET, targetPeriapsis + TARGET:RADIUS).
+    WAIT 0.
+
+    mainframeExecNode().
+}
+
+function mainframeChangeApoapsis {
+    parameter targetApoapsis.
+
+    utilRemoveNodes().
+
+    ADD ADDONS:MainFrame:MANEUVERS:CHANGE_APOAPSIS(TIME:SECONDS + 20, BODY:RADIUS + targetApoapsis).
+    WAIT 0.
+
+    mainframeExecNode().
+}
+
+function mainframeChangePeriapsis {
+    parameter targetPeriapsis.
+
+    utilRemoveNodes().
+
+    ADD ADDONS:MainFrame:MANEUVERS:CHANGE_PERIAPSIS(TIME:SECONDS + 20, BODY:RADIUS + targetPeriapsis).
+    WAIT 0.
+
+    mainframeExecNode().
+}
+
+function mainframeReturnFromMoon {
+    parameter targetPeriapsis.
+
+    utilRemoveNodes().
+
+    ADD ADDONS:MainFrame:MANEUVERS:RETURN_FROM_MOON(BODY:BODY:RADIUS + targetPeriapsis).
+    WAIT 0.
+
+    mainframeExecNode().
+}
