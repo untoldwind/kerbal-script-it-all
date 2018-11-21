@@ -10,6 +10,20 @@ function mainframeCircularize {
     mainframeExecNode().
 }
 
+function mainframeMatchPlanes {
+    uiConsole("MAINFRAME", "Match planes").
+    if not HASTARGET {
+        uiError("MAINFRAME", "No target").
+        return.
+    }
+    utilRemoveNodes().
+
+    ADD ADDONS:MainFrame:MANEUVERS:MATCH_PLANES(TARGET:ORBIT).
+    WAIT 0.
+
+    mainframeExecNode().
+}
+
 function mainframeHohmann {
     uiConsole("MAINFRAME", "Hohmann").
     if not HASTARGET {
@@ -81,7 +95,7 @@ function mainframeReturnFromMoon {
 
     utilRemoveNodes().
 
-    ADD ADDONS:MainFrame:MANEUVERS:RETURN_FROM_MOON(BODY:BODY:RADIUS + targetPeriapsis).
+    ADD ADDONS:MainFrame:MANEUVERS:RETURN_FROM_MOON(targetPeriapsis).
     WAIT 0.
 
     mainframeExecNode().

@@ -1,4 +1,27 @@
 RUNONCEPATH("/core/lib_util").
+RUNONCEPATH("/core/lib_parts").
+
+// Constant docking parameters
+global dock_scale is 25.   // alignment speed scaling factor (m)
+global dock_start is 30.   // ideal start distance (m) & approach speed scaling factor
+global dock_final is 1.    // final-approach distance (m)
+global dock_algnV is 2.5.  // max alignment speed (m/s)
+global dock_apchV is 1.    // max approach speed (m/s)
+global dock_dockV is 0.1.  // final approach speed (m/s)
+global dock_predV is 0.01. // pre dock speed (m/s)
+
+//global dock_Z is pidloop(1.4, 0, 0.4, -1, 1).
+
+// Velocity controllers (during alignment)
+global dock_X1 is pidloop(1.4, 0, 0.4, -1, 1).
+global dock_Y1 is pidloop(1.4, 0, 0.4, -1, 1).
+
+// Position controllers (during approach)
+global dock_X2 is pidloop(0.4, 0, 1.2, -1, 1).
+global dock_Y2 is pidloop(0.4, 0, 1.2, -1, 1).
+
+// Shared velocity controller
+global dock_Z is pidloop(1.4, 0.2, 0.4, -1, 1).
 
 // Cancel most velocity with respect to target. Leave residual speed
 function dockMatchVelocity {
@@ -42,7 +65,277 @@ function dockMatchVelocity {
   }
   // Use RCS to cancel remaining dv
   unlock steering.
-  //utilRCSCancelVelocity(matchVel@,residual,15).
+  utilRCSCancelVelocity(matchVel@,residual,15).
 
   unlock matchVel.
+}
+
+// Prepare to dock by orienting the ship and priming SAS/RCS
+function dockPrepare {
+  parameter myPort, hisPort.
+
+  // Control from myPort
+  partsControlFromDockingPort(myPort).
+
+  sas off.
+  lock steering to lookdirup(-hisPort:portfacing:forevector, hisPort:portfacing:upvector).
+  local t0 to time:seconds.
+  wait until vdot(myPort:portfacing:forevector, hisPort:portfacing:forevector) < -0.996 
+             or (time:seconds - t0 > 15).
+  rcs on.
+}
+
+// Finish docking
+function dockFinish {
+  unlock steering.
+  rcs off.
+  sas on.
+  uiShowPorts(0, 0, 0, false).
+  uiDebugAxes(0,0, v(0,0,0)).
+  clearvecdraws().
+}
+
+// Back off from target in order to approach from the correct side.
+function dockBack {
+  parameter backPos, backVel.
+
+  //Move away from the station when backing more than start distance
+  if backPos:z < -dock_start {
+    if abs(backPos:x) < 50 {
+      local vWantX is (backPos:X / abs(backPos:X)) * max(dock_dockV, 0.5).
+      set dock_X1:setpoint to vWantX.
+    }
+    else set dock_X1:setpoint to 0.
+    set ship:control:starboard to -1 * dock_X1:update(time:seconds, backVel:X).
+  }
+
+  set dock_Z:setpoint to dock_algnV.
+  set ship:control:fore to -dock_Z:update(time:seconds, backVel:Z).
+}
+
+// Center docking ports in X/Y while slowly moving forward
+function dockAlign {
+  parameter alignPos, alignVel.
+
+  // Taper X/Y/Z speed according to distance from target
+  local vScaleX is min(abs(alignPos:X / dock_scale), dock_algnV).
+  local vScaleY is min(abs(alignPos:Y / dock_scale), dock_algnV).
+  local vScaleZ is min(abs(alignPos:Z / dock_start), dock_algnV).
+
+  // Never align slower than final-approach speed
+  local vWantX is -(alignPos:X / abs(alignPos:X)) * max(dock_dockV, dock_algnV * vScaleX).
+  local vWantY is -(alignPos:Y / abs(alignPos:Y)) * max(dock_dockV, dock_algnV * vScaleY).
+  local vWantZ is 0.
+
+  if alignPos:Z >= dock_start {
+    // Move forward at a distance-dependent speed between
+    // approach and final-approach
+    set vWantZ to -max(dock_dockV, dock_apchV*vScaleZ).
+  } else {
+    // Halt at approach-start distance
+    set vWantZ to 0.
+  }
+
+  // Drift into alignment
+  set dock_X1:setpoint to vWantX.
+  set dock_Y1:setpoint to vWantY.
+  set dock_Z:setpoint to vWantZ.
+  set ship:control:starboard to -1 * dock_X1:update(time:seconds, alignVel:X).
+  set ship:control:top to -1 * dock_Y1:update(time:seconds, alignVel:Y).
+  set ship:control:fore to -1 * dock_Z:update(time:seconds, alignVel:Z).
+}
+
+// Close remaining distance to the target, slowing drastically near
+// the end.
+function dockApproach {
+  parameter aprchPos, aprchVel, dockPort.
+  if not dockComplete(dockPort) {
+
+    // Taper Z speed according to distance from target
+    local vScaleZ is min(abs(aprchPos:Z / dock_start), dock_scale).
+    local vWantZ is 0.
+
+    if aprchPos:Z < dock_final {
+      if not dockPending(dockPort) {
+        // Final approach: barely inch forward!
+        set vWantZ to -dock_dockV.
+      }
+      else {
+        set vWantZ to -dock_predV.
+      }
+    } else {
+      // Move forward at a distance-dependent speed between
+      // approach and final-approach
+      set vWantZ to -max(dock_dockV, dock_apchV*vScaleZ).
+    }
+
+    set dock_Z:setpoint to vWantZ.
+    set ship:control:fore to -dock_Z:update(time:seconds, aprchVel:Z).
+
+    // Stay aligned
+    set dock_X2:setpoint to 0.
+    set dock_Y2:setpoint to 0.
+    set ship:control:starboard to -1 * dock_X2:update(time:seconds, aprchPos:X).
+    set ship:control:top to -1 * dock_Y2:update(time:seconds, aprchPos:Y).
+  }
+}
+
+// Find suitable docking ports on self and target. Works using a heuristic:
+//   - if current control part is a port, use it.
+//   - if target is a vessel, find an unoccupied port that matches one in our ship
+//   - (else target is already a port)
+//   - find port on ship that fits the target port
+function dockChoosePorts {
+  local myPort is 0.
+  local hisPort is 0.
+  local hisPorts is list().
+  local myPorts is list().
+
+  // Docking port is already targeted
+  if target:istype("DockingPort") 
+     and target:state = "Ready" { 
+    hisPorts:add(target).
+  }
+  else if target:istype("Vessel") { // ship is targeted; list all free ports.
+    for port in target:dockingports { 
+      if port:state = "Ready" hisPorts:add(port).
+    }
+  }
+
+  // List all my ship ports not occupied. 
+  if SHIP:CONTROLPART:istype("DockingPort") and 
+  not SHIP:CONTROLPART:STATE:CONTAINS("docked") myPorts:add(SHIP:CONTROLPART).
+  else {  
+    for port in ship:dockingports {
+      if not port:state:contains("docked") myPorts:add(port).
+    }
+  }
+
+  // Checks if both ships have ports. 
+  if myPorts:LENGTH = 0 OR hisPorts:LENGTH = 0 {
+    return 0.
+  }
+
+  // Iterates through my ship ports and try to match with a port in target ship.
+  if hisPort = 0 { 
+    for myP in myPorts {
+      if myPort = 0 {
+        for hisP in hisPorts {
+          if hisPort = 0 and hisP:NODETYPE = myP:NODETYPE {
+            set myPort to myP.
+            set hisPort to hisP.
+          }
+        }
+      }
+    }
+  }
+  else{ // Target port was pre-selected. Just find a suitable port in my ship
+    for myP in myPorts {
+      if myPort = 0 and hisPort:NODETYPE = myP:NODETYPE {
+        set myPort to myP. 
+      }
+    }
+  }
+
+  if hisPort <> 0 and myPort <> 0 {
+    set target to hisPort.
+    return myPort.
+  } else {
+    return 0.
+  }
+}
+
+function dockPending {
+  parameter port.
+
+  if port:state = "Acquire" {
+    return true.
+  } else {
+    return false.
+  }
+}
+// Determine whether chosen port is docked
+function dockComplete {
+  parameter port.
+
+  if port:state:contains("Docked") {
+    return true.
+  } else {
+    return false.
+  }
+}
+
+// Undock functions
+
+function dockChooseDeparturePort {
+  for port in core:element:dockingPorts {
+    if dockComplete(port) {
+      return port.
+    }
+  }
+  return 0.
+}
+
+Function dockControlFromCore {
+    parameter ControlPart is ship:rootpart.
+
+    if ControlPart:HasSuffix("CONTROLFROM") ControlPart:ControlFrom().
+    else {
+        for P in SHIP:PARTS {
+            if not p:istype("DockingPort") and p:HasSuffix("CONTROLFROM") {
+                P:ControlFrom().
+                Break.
+            }
+        }.
+    }
+}
+
+Function dockDefaultControlPart {
+    Local CParts is SHIP:PARTSTAGGED("Control").
+    if CParts:Length() = 1 Return CParts[0].
+    else Return ship:rootpart.
+}
+
+FUNCTION utilRCSCancelVelocity {
+  // MUST Be a delegate to a vector
+  // Example:
+  //
+  // LOCK myVec to myNode:DeltaV.
+  // utilRCSCancelVelocity(myVec@).
+  parameter CancelVec. 
+  parameter residualSpeed is 0.01. // Admissible residual speed.
+  parameter MaximumTime is 15. // Maximum time to achieve results.
+
+  local lock tgtVel to -CancelVec().
+
+  //Save ship's systems status
+  local rstatus is rcs. 
+  local sstatus is sas.
+
+  // Prevents ship to rotate
+  sas off.
+  lock steering to ship:facing. 
+  uiDebug("Fine tune with RCS").
+  // Cancel the speed.
+  rcs on.
+  local t0 is time.
+  until tgtVel:mag < residualSpeed or (time - t0):seconds > MaximumTime {
+    local sense is ship:facing.
+    local dirV is V(
+      vdot(tgtVel, sense:starvector),
+      vdot(tgtVel, sense:upvector),
+      vdot(tgtVel, sense:vector)
+    ).
+    set ship:control:translation to dirV:normalized.
+    wait 0.
+  }
+
+  //Return ship controls to previus condition
+  set ship:control:translation to v(0,0,0).
+  set ship:control:neutralize to true.
+  SET SHIP:CONTROL:PILOTMAINTHROTTLE TO 0.
+  UNLOCK STEERING.
+  UNLOCK THROTTLE.
+  set rcs to rstatus.
+  set sas to sstatus.  
 }
