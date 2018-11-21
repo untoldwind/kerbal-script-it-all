@@ -82,7 +82,6 @@ IF mission_state = "attarget_other" {
     updateMissionState("undocked").
 }
 
-
 IF mission_state = "undocked" {
     mainframeReturnFromMoon(180000).
 
