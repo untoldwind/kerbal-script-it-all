@@ -73,7 +73,7 @@ function mainframeChangeApoapsis {
 
     utilRemoveNodes().
 
-    ADD ADDONS:MainFrame:MANEUVERS:CHANGE_APOAPSIS(TIME:SECONDS + 20, BODY:RADIUS + targetApoapsis).
+    ADD ADDONS:MainFrame:MANEUVERS:CHANGE_APOAPSIS(TIME + 20, BODY:RADIUS + targetApoapsis).
     WAIT 0.
 
     mainframeExecNode().
@@ -84,7 +84,7 @@ function mainframeChangePeriapsis {
 
     utilRemoveNodes().
 
-    ADD ADDONS:MainFrame:MANEUVERS:CHANGE_PERIAPSIS(TIME:SECONDS + 20, BODY:RADIUS + targetPeriapsis).
+    ADD ADDONS:MainFrame:MANEUVERS:CHANGE_PERIAPSIS(TIME + 20, BODY:RADIUS + targetPeriapsis).
     WAIT 0.
 
     mainframeExecNode().
