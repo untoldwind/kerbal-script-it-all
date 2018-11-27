@@ -2,7 +2,7 @@
 RUNONCEPATH("/core/lib_ui").
 RUNONCEPATH("/core/lib_util").
 RUNONCEPATH("/vac/lib_land").
-RUNONCEPATH("/orbit/exec_node").
+RUNONCEPATH("/mainframe/exec_node").
 
 function vacLand {
     parameter LandLat is 0.
@@ -48,7 +48,7 @@ function vacLand {
             uiDebug("Deorbit: Burning dV of " + round(TotIncDV,1) + " m/s @ anti-normal to change plane.").
             LOCAL nd IS NODE(time:seconds + landTimeToLong(PlaneChangeLong+phiIncManeuver), 0, -nDv, pDv).
             add nd. 
-            orbitExecNode().
+            mainframeExecNode().
         }
 
         // Lower orbit over landing site
@@ -56,7 +56,7 @@ function vacLand {
         uiDebug("Deorbit: Burning dV of " + round(Deorbit_dV,1) + " m/s retrograde to deorbit.").
         LOCAL nd IS NODE(time:seconds + landTimeToLong(Deorbit_Long+phi) , 0, 0, Deorbit_dV).
         add nd. 
-        orbitExecNode(). 
+        mainframeExecNode(). 
         uiDebug("Deorbit: Deorbit burn done"). 
         wait 5. // Let's have some time to breath and look what's happening 
 
@@ -72,7 +72,7 @@ function vacLand {
         SET ND TO NODE(time:seconds + eta:periapsis , 0, 0, -BreakingDeltaV).
         add nd.
         
-        orbitExecNode().
+        mainframeExecNode().
         uiDebug("Deorbit: Brake burn done").
 
     }
