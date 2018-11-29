@@ -24,12 +24,13 @@ function mainframeExecNode {
 
 	LOCAL nn IS NEXTNODE.
 
+	rcs off.
 	sas off.
 	LOCK steerDir to LOOKDIRUP(nn:DELTAV, POSITIONAT(SHIP, TIME:SECONDS + nn:ETA) - BODY:POSITION).
 	LOCK STEERING to steerDir.
 
-	LOCAL burnTime IS stagingBurnTimeForDv(nn:DELTAV:MAG).
-	LOCAL dt IS burnTime/2.
+	LOCAL burnTime IS addons:mainframe:info:burn_time(nn:DELTAV:MAG, 1).
+	LOCAL dt IS burnTime:HALF:SECONDS.
 
 	// If have time, wait to ship almost align with maneuver node.
 	// If have little time, wait at least to ship face in general direction of node

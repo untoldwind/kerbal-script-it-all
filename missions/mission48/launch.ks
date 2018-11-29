@@ -9,21 +9,21 @@ mainframeEnsure().
 IF mission_state = "launch" {
     LIGHTS ON.
     PRINT "Launch sequence".
-    atmoLaunchAscent(120000).
+    atmoLaunchAscent(100000).
     mainframeCircularize().
 
     updateMissionState("inorbit").
 }
 
 IF mission_state = "inorbit" {
-    SET TARGET TO Minmus.
-    mainframeHohmann().
+    SET TARGET TO Mun.
+    mainframeBiImplusive().
 
     updateMissionState("intransit_minmus").
 }
 
 IF mission_state = "intransit_minmus" {
-    mainframeCorrectTargetPeriapsis(50000).
+    mainframeCorrectTargetPeriapsis(120000).
 
     updateMissionState("corrected_transit").
 }
@@ -35,7 +35,14 @@ IF mission_state = "corrected_transit" {
 }
 
 IF mission_state = "entered_soi" {
-    mainframeChangePeriapsis(50000).
+    mainframeChangePeriapsis(120000).
+    mainframeCircularize().
+
+    updateMissionState("inorbit_target").
+}
+
+IF mission_state = "inorbit_target" {
+    mainframeChangeInclination(90).
 
     updateMissionState("done").
 }

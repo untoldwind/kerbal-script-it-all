@@ -5,6 +5,13 @@ RUNONCEPATH("/core/lib_warp").
 RUNONCEPATH("/core/lib_staging").
 RUNONCEPATH("/core/lib_ui").
 
+// calculate burn time for maneuver needing provided deltaV
+function orbitBurnTimeForDv {
+	parameter dv.
+	// For now a rough estimate will sufice
+	return SHIP:MASS * dv / SHIP:AVAILABLETHRUST.
+}
+
 function orbitExecNode {
 	// Configuration constants; these are pre-set for automated missions; if you
 	// have a ship that turns poorly, you may need to decrease these and perform
@@ -22,11 +29,12 @@ function orbitExecNode {
 
 	LOCAL nn IS NEXTNODE.
 
+	rcs off.
 	sas off.
 	LOCK steerDir to LOOKDIRUP(nn:DELTAV, POSITIONAT(SHIP, TIME:SECONDS + nn:ETA) - BODY:POSITION).
 	LOCK STEERING to steerDir.
 
-	LOCAL burnTime IS stagingBurnTimeForDv(nn:DELTAV:MAG).
+	LOCAL burnTime IS orbitBurnTimeForDv(nn:DELTAV:MAG).
 	LOCAL dt IS burnTime/2.
 
 	// If have time, wait to ship almost align with maneuver node.

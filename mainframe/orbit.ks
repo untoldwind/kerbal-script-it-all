@@ -18,7 +18,7 @@ function mainframeMatchPlanes {
     }
     utilRemoveNodes().
 
-    ADD ADDONS:MainFrame:MANEUVERS:MATCH_PLANES(TARGET:ORBIT).
+    ADD ADDONS:MainFrame:MANEUVERS:MATCH_PLANES(TARGET).
     WAIT 0.
 
     mainframeExecNode().
@@ -32,7 +32,21 @@ function mainframeHohmann {
     }
     utilRemoveNodes().
 
-    ADD ADDONS:MainFrame:MANEUVERS:HOHMANN_LAMBERT(TARGET:ORBIT, 0).
+    ADD ADDONS:MainFrame:MANEUVERS:HOHMANN_LAMBERT(TARGET, 0).
+    WAIT 0.
+
+    mainframeExecNode().
+}
+
+function mainframeBiImplusive {
+    uiConsole("MAINFRAME", "BiImpulsive").
+    if not HASTARGET {
+        uiError("MAINFRAME", "No target").
+        return.
+    }
+    utilRemoveNodes().
+
+    ADD ADDONS:MainFrame:MANEUVERS:BIIMPULSIVE(TARGET).
     WAIT 0.
 
     mainframeExecNode().
@@ -46,7 +60,7 @@ function mainframeMatchVelocities {
     }
     utilRemoveNodes().
 
-    ADD ADDONS:MainFrame:MANEUVERS:MATCH_VELOCITIES(TARGET:ORBIT).
+    ADD ADDONS:MainFrame:MANEUVERS:MATCH_VELOCITIES(TARGET).
     WAIT 0.
 
     mainframeExecNode().
@@ -69,22 +83,39 @@ function mainframeCorrectTargetPeriapsis {
 }
 
 function mainframeChangeApoapsis {
+    uiConsole("MAINFRAME", "Change apapsis").
     parameter targetApoapsis.
+    parameter atTime IS TIME + 20.
 
     utilRemoveNodes().
 
-    ADD ADDONS:MainFrame:MANEUVERS:CHANGE_APOAPSIS(TIME + 20, BODY:RADIUS + targetApoapsis).
+    ADD ADDONS:MainFrame:MANEUVERS:CHANGE_APOAPSIS(atTime, BODY:RADIUS + targetApoapsis).
     WAIT 0.
 
     mainframeExecNode().
 }
 
 function mainframeChangePeriapsis {
+    uiConsole("MAINFRAME", "Change periapsis").
     parameter targetPeriapsis.
+    parameter atTime IS TIME + 20.
 
     utilRemoveNodes().
 
-    ADD ADDONS:MainFrame:MANEUVERS:CHANGE_PERIAPSIS(TIME + 20, BODY:RADIUS + targetPeriapsis).
+    ADD ADDONS:MainFrame:MANEUVERS:CHANGE_PERIAPSIS(atTime, BODY:RADIUS + targetPeriapsis).
+    WAIT 0.
+
+    mainframeExecNode().
+}
+
+function mainframeChangeInclination {
+    uiConsole("MAINFRAME", "Change inclination").
+    parameter targetInclination.
+    parameter atTime IS TIME + 20.
+
+    utilRemoveNodes().
+
+    ADD ADDONS:MainFrame:MANEUVERS:CHANGE_INCLINATION(atTime, targetInclination).
     WAIT 0.
 
     mainframeExecNode().

@@ -46,6 +46,10 @@ function partsRetractAntennas {
 	return partsDoEvent("ModuleDeployableAntenna", "Retract", tag).
 }
 
+function partsDeployFairings {
+	return partsDoEvent("ModuleProceduralFairing", "deploy").
+}
+
 function partsControlFromDockingPort {
 	parameter cPart. //The docking port you want to control from.
 	local success is false.
