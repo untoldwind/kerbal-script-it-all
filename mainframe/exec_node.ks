@@ -40,7 +40,7 @@ function mainframeExecNode {
 	UNTIL utilIsShipFacing(steerDir, node_bestFacing, 0.5) or
 		nn:ETA <= dt and utilIsShipFacing(steerDir, node_okFacing, 5)
 	{
-		IF SHIP:angularvel:mag < 0.01 RCS on.
+//		IF SHIP:angularvel:mag < 0.01 RCS on.
 		IF not warped { set warped to true. physWarp(1). }
 		WAIT 0.
 	}
@@ -85,6 +85,7 @@ function mainframeExecNode {
 				set maxThrottle to 0.1.
 				rcs on.
 			}
+
 			IF vdot(dv0, nn:DELTAV) < 0 break.	// overshot (node delta vee is pointing opposite from initial)
 			IF dv > dvMin + 0.1 break.			// burn DV increases (off target due to wobbles)
 			IF dv <= 0.2 {						// burn DV gets too small for main engines to cope with
