@@ -21,7 +21,7 @@ function vacLand {
 
     if ship:status = "SUB_ORBITAL" or ship:status = "FLYING" {
         if addons:mainframe:landing:predicted_break_time > TIME + 10 {
-            vacCourseCorrection().
+            vacCourseCorrection(LandingSite).
         }
 
         vacDecelerationBurn().
@@ -39,17 +39,18 @@ function vacLandPrepareDeorbit {
     LOCAL r2 is DeorbitRad .                                            // Target orbit
     LOCAL pt is 0.5 * ((r1+r2) / (2*r2))^1.5.                           // How many orbits of a target in the target (deorbit) orbit will do.
     LOCAL sp is SQRT( ( 4 * constant:pi^2 * r2^3 ) / body:mu ).         // Period of the target orbit.
-    LOCAL DeorbitTravelTime is pt*sp.                                   // Transit time 
+    LOCAL DeorbitTravelTime is pt*sp /2.                                // Transit time 
     LOCAL phi is (DeorbitTravelTime/ship:body:rotationperiod) * 360.    // Phi in this case is not the angle between two orbits, but the angle the body rotates during the transit time
-    LOCAL IncTravelTime is SHIP:ORBIT:period / 4. // Travel time between change of inclinationa and lower perigee
+    LOCAL IncTravelTime is SHIP:ORBIT:period / 2. // Travel time between change of inclinationa and lower perigee
     LOCAL phiIncManeuver is (IncTravelTime/ship:body:rotationperiod) * 360.
 
     // Deorbit and plane change longitudes
     LOCAL Deorbit_Long to utilAngleTo360(LandingSite:LNG - 90).
-    LOCAl PlaneChangeLong to utilAngleTo360(LandingSite:LNG - 180).
+    LOCAl PlaneChangeLong to utilAngleTo360(LandingSite:LNG - 270).
 
     IF SHIP:ORBIT:INCLINATION < -90 OR SHIP:ORBIT:INCLINATION > 90 {
         SET Deorbit_Long to utilAngleTo360(LandingSite:LNG + 90).
+        SET PlaneChangeLong to utilAngleTo360(LandingSite:LNG + 270).
     }
 
     // Plane change for landing site
@@ -76,13 +77,36 @@ function vacLandPrepareDeorbit {
     add nd. 
     mainframeExecNode(). 
     WAIT 0. 
-    uiDebug("Deorbit: Deorbit burn done"). 
 }
 
 function vacCourseCorrection {
-    add addons:mainframe:landing:course_correction(TIME + 20, true).
-    WAIT 0.
-    mainframeExecNode(). 
+    parameter LandingSite.
+
+    LOCAL desiredSite TO LandingSite.
+    LOCK predictedBreakTime TO addons:mainframe:landing:predicted_break_time.
+    LOCK courseCorrection TO addons:mainframe:landing:COURSE_CORRECTION_DETLAV(true).
+    LOCK predictedSite TO addons:mainframe:landing:predicted_site.
+
+    function throttleControl {
+        IF NOT utilIsShipFacing(courseCorrection:DIRECTION, 10, 1) {
+            return 0.
+        }
+        return MIN(1, MAX(0.1, courseCorrection:mag * SHIP:MASS/MAX(1,SHIP:AVAILABLETHRUST))).
+
+    }
+
+    LOCK STEERING TO courseCorrection:DIRECTION.
+    LOCK THROTTLE TO throttleControl.
+
+    until predictedBreakTime < TIME + 20 OR (predictedSite:POSITION - desiredSite:POSITION):MAG < 500 {
+        PRINT "Desired Site    : " + desiredSite + "                           " at (0,0).
+        PRINT "Predicted Site  : " + predictedSite + "                           " at (0,1).
+        PRINT "Couse correction: " + courseCorrection + "                           " at (0,2).
+        PRINT "Dist            : " + (predictedSite:POSITION - desiredSite:POSITION):MAG + "                           " at (0,3).
+
+        WAIT 0.1.
+    }
+    UNLOCK THROTTLE. UNLOCK STEERING.
 }
 
 function vacDecelerationBurn {
@@ -121,7 +145,7 @@ function vacDecelerationBurn {
         LOCAL desiredSpeed IS addons:mainframe:landing:DESIRED_SPEED.
 
         SET steerDir TO SteerVector:DIRECTION.
-        SET throttleVal TO ThrottlePID:UPDATE(TIME:seconds,(desiredSpeed - ShipVelocity:MAG) / 0.3).
+        SET throttleVal TO ThrottlePID:UPDATE(TIME:seconds,(desiredSpeed - ShipVelocity:MAG)).
 
         if DrawDebugVectors {
             SET DRAWSV TO VECDRAW(v(0,0,0), 10 *SteerVector, red, "Steering", 1, true, 1).
