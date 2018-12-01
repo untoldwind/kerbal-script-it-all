@@ -33,7 +33,7 @@ function vacLand {
 function vacLandPrepareDeorbit {
     parameter LandingSite.
 
-    LOCAL DeorbitRad is ship:body:radius - 2000.
+    LOCAL DeorbitRad is ship:body:radius - 3000.
 
     LOCAL r1 is ship:orbit:semimajoraxis.                               //Orbit now
     LOCAL r2 is DeorbitRad .                                            // Target orbit
@@ -56,16 +56,15 @@ function vacLandPrepareDeorbit {
     // Plane change for landing site
     LOCAL vel is velocityat(ship, landTimeToLong(PlaneChangeLong)):orbit.
     LOCAL inc is LandingSite:lat.
-    LOCAL TotIncDV is 2 * vel:mag * sin(inc / 2).
     LOCAL nDv is vel:mag * sin(inc).
     LOCAL pDV is vel:mag * (cos(inc) - 1 ).
 
-    if TotIncDV > 0.1 { // Only burn if it matters.
-        uiDebug("Deorbit: Burning dV of " + round(TotIncDV,1) + " m/s @ anti-normal to change plane.").
+    if nDv * nDv + pDv * pDv > 0.1 { // Only burn if it matters.
+        uiDebug("Deorbit: Burning dV of " + round(SQRT(nDv * nDv + pDv * pDv),1) + " m/s @ anti-normal to change plane.").
         utilRemoveNodes().
         LOCAL nd IS NODE(time:seconds + landTimeToLong(PlaneChangeLong+phiIncManeuver), 0, -nDv, pDv).
         add nd.
-        WAIT 0. 
+        WAIT 1. 
         mainframeExecNode().
     }
 
@@ -75,8 +74,8 @@ function vacLandPrepareDeorbit {
     utilRemoveNodes().
     LOCAL nd IS NODE(time:seconds + landTimeToLong(Deorbit_Long+phi) , 0, 0, Deorbit_dV).
     add nd. 
+    WAIT 1. 
     mainframeExecNode(). 
-    WAIT 0. 
 }
 
 function vacCourseCorrection {
