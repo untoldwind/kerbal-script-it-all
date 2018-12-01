@@ -86,26 +86,32 @@ function mainframeChangeApoapsis {
     uiConsole("MAINFRAME", "Change apapsis").
     parameter targetApoapsis.
     parameter atTime IS TIME + 20.
+    parameter exec IS TRUE.
 
     utilRemoveNodes().
 
     ADD ADDONS:MainFrame:MANEUVERS:CHANGE_APOAPSIS(atTime, BODY:RADIUS + targetApoapsis).
-    WAIT 0.
+    IF exec {
+        WAIT 0.
 
-    mainframeExecNode().
+        mainframeExecNode().
+    }
 }
 
 function mainframeChangePeriapsis {
     uiConsole("MAINFRAME", "Change periapsis").
     parameter targetPeriapsis.
     parameter atTime IS TIME + 20.
+    parameter exec IS TRUE.
 
     utilRemoveNodes().
 
     ADD ADDONS:MainFrame:MANEUVERS:CHANGE_PERIAPSIS(atTime, BODY:RADIUS + targetPeriapsis).
-    WAIT 0.
+    IF exec {
+        WAIT 0.
 
-    mainframeExecNode().
+        mainframeExecNode().
+    }
 }
 
 function mainframeChangeInclination {
