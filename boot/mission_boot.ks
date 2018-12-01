@@ -1,5 +1,5 @@
-LOCAL modules IS List("core", "atmo", "mainframe").
-LOCAL mission IS "mission48a".
+LOCAL modules IS List("core", "atmo", "mainframe", "rendezvous").
+LOCAL mission IS "mission49".
 
 function bootConsole {
   parameter msg.
