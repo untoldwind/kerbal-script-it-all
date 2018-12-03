@@ -102,7 +102,7 @@ function orbitExecNode {
 			IF choked = 0 set choked to time:seconds.
 			IF not warned and time:seconds-choked > 3 {
 				set warned to true.
-				uiWarn("Node", "No acceleration").
+				uiWarning("Node", "No acceleration").
 			}
 			IF time:seconds-choked > 30
 				uiFatal("Node", "No acceleration").

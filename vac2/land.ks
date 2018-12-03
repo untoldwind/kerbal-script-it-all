@@ -9,6 +9,7 @@ function vacLand {
     parameter LandLat is 0.
     parameter LandLng is 0.
 
+    uiConsole("VACLAND", "Start").
     clearvecdraws().
 
     LOCAL LandingSite is LATLNG(LandLat,LandLng).
@@ -19,12 +20,20 @@ function vacLand {
         vacLandPrepareDeorbit(LandingSite).
     }
 
-    if ship:status = "SUB_ORBITAL" or ship:status = "FLYING" {
-        if addons:mainframe:landing:predicted_break_time > TIME + 10 {
+    if ship:status = "SUB_ORBITAL" OR ship:status = "FLYING" {
+        UNTIL addons:mainframe:landing:PREDICTED_OUTCOME = "LANDED" {
+            wait 0.
+        }
+
+        if addons:mainframe:landing:predicted_break_time > TIME + 10 and landRadarAltimeter() > 500 {
             vacCourseCorrection(LandingSite).
         }
 
-        vacDecelerationBurn().
+        if landRadarAltimeter() > 500 {
+            vacDecelerationBurn().
+        }
+        vacBreakZero().
+        vacTouchdown().
     }
 
     addons:mainframe:landing:prediction_stop().
@@ -32,6 +41,8 @@ function vacLand {
 
 function vacLandPrepareDeorbit {
     parameter LandingSite.
+
+    uiConsole("VACLAND", "Prepare Deorbit").
 
     LOCAL DeorbitRad is ship:body:radius - 3000.
 
@@ -81,6 +92,8 @@ function vacLandPrepareDeorbit {
 function vacCourseCorrection {
     parameter LandingSite.
 
+    uiConsole("VACLAND", "Course Correction").
+
     LOCAL desiredSite TO LandingSite.
     LOCK predictedBreakTime TO addons:mainframe:landing:predicted_break_time.
     LOCK courseCorrection TO addons:mainframe:landing:COURSE_CORRECTION_DETLAV(true).
@@ -109,9 +122,9 @@ function vacCourseCorrection {
 }
 
 function vacDecelerationBurn {
+    uiConsole("VACLAND", "Deceleration Burn").
+
     LOCAL DrawDebugVectors is true.
-        
-    LOCAL TouchdownSpeed to 2.
 
     LOCAL ThrottlePID IS PIDLOOP(0.04,0.001,0.01). // Kp, Ki, Kd
     SET ThrottlePID:MAXOUTPUT TO 1.
@@ -133,6 +146,7 @@ function vacDecelerationBurn {
     LIGHTS on.
 
     LOCK radarAlt TO landRadarAltimeter().
+
     UNTIL radarAlt < 500 {
         WAIT 0.3.
 
@@ -158,6 +172,55 @@ function vacDecelerationBurn {
             print "                                                                         " at (0,5).
         }
     }
+
+    UNLOCK THROTTLE. UNLOCK STEERING.
+    SET SHIP:CONTROL:NEUTRALIZE TO TRUE.
+    SET SHIP:CONTROL:PILOTMAINTHROTTLE TO 0.
+}
+
+function vacBreakZero {
+    uiConsole("VACLAND", "Break zero").
+
+    LOCAL ThrottlePID IS PIDLOOP(0.04,0.001,0.01). // Kp, Ki, Kd
+    SET ThrottlePID:MAXOUTPUT TO 1.
+    SET ThrottlePID:MINOUTPUT TO 0.
+    SET ThrottlePID:SETPOINT TO 0. 
+
+    LOCAL steerDir IS SHIP:RETROGRADE.
+    LOCK STEERING TO steerDir.
+    LOCAL throttleVal is 0.
+    LOCK THROTTLE to throttleVal.
+
+    UNTIL SHIP:velocity:surface:mag < 2 {
+        WAIT 0.
+        SET SteerVector to -SHIP:velocity:surface.
+        set steerDir TO SteerVector:Direction. 
+        set throttleVal TO ThrottlePID:UPDATE(TIME:seconds,-SHIP:velocity:surface:mag).
+    }
+
+    UNLOCK THROTTLE. UNLOCK STEERING.
+    SET SHIP:CONTROL:NEUTRALIZE TO TRUE.
+    SET SHIP:CONTROL:PILOTMAINTHROTTLE TO 0.
+}
+
+function vacTouchdown {
+    parameter TouchdownSpeed is 2.
+
+    uiConsole("VACLAND", "Touchdown").
+
+    LOCAL DrawDebugVectors is true.
+        
+    LOCAL ThrottlePID IS PIDLOOP(0.04,0.001,0.01). // Kp, Ki, Kd
+    SET ThrottlePID:MAXOUTPUT TO 1.
+    SET ThrottlePID:MINOUTPUT TO 0.
+    SET ThrottlePID:SETPOINT TO 0. 
+
+    LOCAL steerDir IS SHIP:RETROGRADE.
+    LOCK STEERING TO steerDir.
+    LOCAL throttleVal is 0.
+    LOCK THROTTLE to throttleVal.
+
+    LOCK radarAlt TO landRadarAltimeter().
 
     // Main landing loop
     UNTIL SHIP:STATUS = "LANDED" OR SHIP:STATUS = "SPLASHED" {
