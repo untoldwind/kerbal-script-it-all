@@ -65,7 +65,7 @@ UNTIL mission_state = "done" {
 
     SWITCH TO CORE:VOLUME.
 
-    runpath("/missions/" + mission + "/launch").
+    runpath("/missions/" + mission).
 }
 
 IF SHIP:CREW:LENGTH > 0 {
