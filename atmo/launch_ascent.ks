@@ -22,7 +22,7 @@ function atmoLaunchAscent {
 		// Ideal gravity-turn azimuth (inclination) and facing at present altitude.
 		LOCAL pitch is ARCCOS(gtPct).
 
-		return heading(launchHeading, pitch).
+		return heading(launchHeading, pitch) + R(0,0,-launchHeading).
 	}
 
 	// Throttle function for continuous lock.

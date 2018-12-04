@@ -68,6 +68,7 @@ function mainframeMatchVelocities {
 
 function mainframeCorrectTargetPeriapsis {
     parameter targetPeriapsis.
+    parameter exec IS true.
 
     uiConsole("MAINFRAME", "Correct Target Periapsis").
     if not HASTARGET or TARGET:TYPENAME <> "Body" {
@@ -77,9 +78,14 @@ function mainframeCorrectTargetPeriapsis {
     utilRemoveNodes().
 
     ADD ADDONS:MainFrame:MANEUVERS:CHEAPEST_CORRECTION_BODY(TARGET, targetPeriapsis + TARGET:RADIUS).
-    WAIT 0.
+    IF exec {
+        WAIT 0.
 
-    mainframeExecNode().
+        mainframeExecNode().
+    } ELSE IF ADDONS:AVAILABLE("KAC") {
+        SET alarm TO addAlarm("ManeuverAuto", TIME:SECONDS + NEXTNODE:ETA - 600, ship:NAME, "Couse correction to " + target:Name).
+        SET alarm:MARGIN TO 600.
+    }
 }
 
 function mainframeChangeApoapsis {
@@ -136,4 +142,35 @@ function mainframeReturnFromMoon {
     WAIT 0.
 
     mainframeExecNode().
+}
+
+function mainframeInterplanetary {
+    parameter exec IS TRUE.
+
+    utilRemoveNodes().
+
+    ADD ADDONS:MainFrame:MANEUVERS:INTERPLANETARY(target, true).
+    IF exec {
+        WAIT 0.
+
+        mainframeExecNode().
+    } ELSE IF ADDONS:AVAILABLE("KAC") {
+        SET alarm TO addAlarm("ManeuverAuto", TIME:SECONDS + NEXTNODE:ETA - 600, ship:NAME, "Exit orbit to " + target:Name).
+        SET alarm:MARGIN TO 600.
+    }
+}
+function mainframeInterplanetaryLambert {
+    parameter exec IS TRUE.
+
+    utilRemoveNodes().
+
+    ADD ADDONS:MainFrame:MANEUVERS:INTERPLANETARY_LAMBERT(target).
+    IF exec {
+        WAIT 0.
+
+        mainframeExecNode().
+    } ELSE IF ADDONS:AVAILABLE("KAC") {
+        SET alarm TO addAlarm("ManeuverAuto", TIME:SECONDS + NEXTNODE:ETA - 600, ship:NAME, "Exit orbit to " + target:Name).
+        SET alarm:MARGIN TO 600.
+    }
 }
