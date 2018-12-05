@@ -11,6 +11,7 @@ RUNONCEPATH("/core/lib_parts").
 function atmoLaunchAscent {
 	parameter targetApoapsis is 90000.
 	parameter launchHeading is 90.
+
 	// Starting/ending height of gravity turn
 	GLOBAL launch_gt0 is BODY:ATM:HEIGHT * 0.007.
 	GLOBAL launch_gt1 is BODY:ATM:HEIGHT * 0.6. 
