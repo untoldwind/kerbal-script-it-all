@@ -131,7 +131,8 @@ function vacDecelerationBurn {
     SET ThrottlePID:MINOUTPUT TO 0.
     SET ThrottlePID:SETPOINT TO 0. 
 
-    LOCAL steerDir IS SHIP:RETROGRADE.
+    LOCAL VELAT IS VELOCITYAT(SHIP, addons:mainframe:landing:predicted_break_time):ORBIT.
+    LOCAL steerDir IS LOOKDIRUP(-VELAT, POSITIONAT(SHIP, addons:mainframe:landing:predicted_break_time) - BODY:POSITION).
     LOCK STEERING TO steerDir.
     LOCAL throttleVal is 0.
     LOCK THROTTLE to throttleVal.
@@ -180,23 +181,15 @@ function vacDecelerationBurn {
 
 function vacBreakZero {
     uiConsole("VACLAND", "Break zero").
+    local accel is SHIP:availablethrust / SHIP:mass.
 
-    LOCAL ThrottlePID IS PIDLOOP(0.04,0.001,0.01). // Kp, Ki, Kd
-    SET ThrottlePID:MAXOUTPUT TO 1.
-    SET ThrottlePID:MINOUTPUT TO 0.
-    SET ThrottlePID:SETPOINT TO 0. 
+    lock steerDir to lookdirup(-SHIP:velocity:surface:normalized, ship:facing:upvector).
+    lock steering to steerDir.
+    wait until utilIsShipFacing(steerDir:vector, 10, 1) or landRadarAltimeter() < 300.
 
-    LOCAL steerDir IS SHIP:RETROGRADE.
-    LOCK STEERING TO steerDir.
-    LOCAL throttleVal is 0.
-    LOCK THROTTLE to throttleVal.
-
-    UNTIL SHIP:velocity:surface:mag < 2 {
-        WAIT 0.
-        SET SteerVector to -SHIP:velocity:surface.
-        set steerDir TO SteerVector:Direction. 
-        set throttleVal TO ThrottlePID:UPDATE(TIME:seconds,-SHIP:velocity:surface:mag).
-    }
+    lock throttle to min(SHIP:velocity:surface:mag / accel, 1.0).
+    wait until (SHIP:velocity:surface:mag < 2) or landRadarAltimeter() < 300.
+    lock throttle to 0.
 
     UNLOCK THROTTLE. UNLOCK STEERING.
     SET SHIP:CONTROL:NEUTRALIZE TO TRUE.
@@ -239,7 +232,7 @@ function vacTouchdown {
         set steerDir TO SteerVector:Direction. 
 
         // Throttle the rocket
-        set TargetVSpeed to MAX(TouchdownSpeed,sqrt(radarAlt)).
+        set TargetVSpeed to MAX(TouchdownSpeed,sqrt(radarAlt) - 5).
 
         IF abs(SHIP:VERTICALSPEED) > TargetVSpeed {
             set throttleVal TO ThrottlePID:UPDATE(TIME:seconds,(SHIP:VERTICALSPEED + TargetVSpeed)).
