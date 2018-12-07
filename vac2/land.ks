@@ -8,6 +8,8 @@ RUNONCEPATH("/mainframe/exec_node").
 function vacLand {
     parameter LandLat is 0.
     parameter LandLng is 0.
+    parameter breakZero is true.
+    parameter landingStage is -1.
 
     uiConsole("VACLAND", "Start").
     clearvecdraws().
@@ -18,6 +20,13 @@ function vacLand {
 
     if ship:status = "ORBITING" {
         vacLandPrepareDeorbit(LandingSite).
+
+        if landingStage >= 0 {
+            UNTIL STAGE:NUMBER = landingStage {
+                WAIT UNTIL STAGE:READY.
+                STAGE.
+            }
+        }
     }
 
     if ship:status = "SUB_ORBITAL" OR ship:status = "FLYING" {
@@ -32,7 +41,9 @@ function vacLand {
         if landRadarAltimeter() > 500 {
             vacDecelerationBurn().
         }
-        vacBreakZero().
+        if breakZero {
+            vacBreakZero().
+        }
         vacTouchdown().
     }
 
