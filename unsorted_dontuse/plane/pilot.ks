@@ -7,8 +7,10 @@ set yokeRoll to 0.
 set shipRoll to 0.
 set shipCompass to 0.
 
-set east_ves to vessel("VASI east").
-set west_ves to vessel("VASI west").
+LOCAL RunwayStart IS LATLNG(-0.0486, -74.715).
+LOCAL RunwayEnd IS LATLNG(-0.050, -74.4947394).
+set east_ves to LATLNG(-0.050, -74.4947394).
+set west_ves to LATLNG(-0.0486, -74.715).
 set runway_alt to body:altitudeof(west_ves:position).
 
 lock runway_vect to (east_ves:position - west_ves:position):normalized.
@@ -21,23 +23,23 @@ set aim_alt_list to list().
 set aim_spd_list to list().
 
 // Seed a final waypoint which is on the runway, at ground altitude, with 80% of runway left:
-local aim_pos is east_ves:geoposition:altitudeposition(0).
+local aim_pos is east_ves:altitudeposition(0).
 aim_geo_list:add(ship:body:geopositionof(aim_pos)).
 aim_alt_list:add(0).
-aim_spd_list:add(65).
+aim_spd_list:add(90).
 
 until i >= 5 {
   local aim_alt is runway_alt+5+arith_series*150.
-  local aim_pos is west_ves:geoposition:altitudeposition(aim_alt) - (120 + 1500*arith_series)*runway_vect.
+  local aim_pos is west_ves:altitudeposition(aim_alt) - (120 + 1500*arith_series)*runway_vect.
   local aim_geo is ship:body:geopositionof(aim_pos).
   aim_geo_list:add(aim_geo).
   aim_alt_list:add(aim_alt).
   if i = 0 { 
-    aim_spd_list:add(75).
+    aim_spd_list:add(100).
   } else if i = 1{
-    aim_spd_list:add(80).
-  } else {
     aim_spd_list:add(120).
+  } else {
+    aim_spd_list:add(180).
   }
   set i to i+1.
   set arith_series to arith_series+i.
@@ -176,7 +178,7 @@ function get_want_climb {
 
   local alt_diff is ves:body:altitudeof(ap) - ves:altitude.
   local dist is circle_distance( ves:geoposition, ves:body:geopositionof(ap), ves:body:radius+ves:altitude).
-  local time_to_dest is dist / ves:surfacespeed.
+  local time_to_dest is dist / ves:GROUNDSPEED.
 
   return alt_diff / time_to_dest.
 }
