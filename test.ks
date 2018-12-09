@@ -19,7 +19,7 @@ function launch {
 }
 
 function pickup {
-    SET TARGET TO "Valrigh's Derelict".
+    SET TARGET TO "Meldun's Derelict".
     mainframeBiImplusive().
     mainframeMatchVelocities().
     rendezvousApproach().
@@ -40,6 +40,8 @@ function deorbit {
     mainframeChangePeriapsis(-3000, time + landTimeToLong(Deorbit_Long+phi)).
 }
 
+LOCAL RunwayFAR IS LATLNG(-0.0486, -80).
+
 function aeroBreak {
     planeSwitchAtmo().
     partsRetractSolarPanels().
@@ -47,16 +49,38 @@ function aeroBreak {
 
     SAS off.
 
-    LOCK STEERING TO HEADING(90, 30).
+    LOCK STEERING TO HEADING(RunwayFAR:HEADING, 30).
 
     physWarp(1).
 
     WAIT UNTIL SHIP:ALTITUDE < 23000 or SHIP:VELOCITY:SURFACE:MAG < 1200.
 
     UNLOCK STEERING.
-
-    SAS on.
 }
 
-deorbit().
-aeroBreak().
+function soarDown {
+    SAS off.
+    
+    LOCAL PitchPID IS PIDLOOP(0.4,0.01,0.1,-10, 20).     
+    LOCAL ThrottlePID IS PIDLOOP(0.04,0.001,0.01,0, 1). 
+    LOCAL tgtVelocity IS 800.
+    LOCAL tgtAlt IS 12000.
+    LOCAL tgtPitch IS 0.
+    LOCAL tgtThrottle IS 0.
+
+    LOCK STEERING TO HEADING(RunwayFAR:HEADING, 0).
+    LOCK THROTTLE TO tgtThrottle.
+
+    UNTIL SHIP:GEOPOSITION:LNG < 0 AND SHIP:GEOPOSITION:LNG > -85 {
+        WAIT 0.
+
+        SET tgtThrottle TO ThrottlePID:UPDATE(TIME:SECONDS, SHIP:VELOCITY:SURFACE:MAG - tgtVelocity).
+        SET tgtPitch TO PitchPID:UPDATE(TIME:SECONDS, tgtAlt - SHIP:ALTITUDE).
+    }
+}
+
+//launch().
+//pickup().
+//deorbit().
+//aeroBreak().
+soarDown().

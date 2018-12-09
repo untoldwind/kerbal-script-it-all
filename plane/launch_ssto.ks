@@ -7,6 +7,8 @@ function planeLaunchSSTO {
     Parameter TGTApoapsis is 120000.
     Parameter TGTHeading is 90.
 
+    LOCAL RunwayEnd IS LATLNG(-0.050, -74.4947394).
+
     // Global Variables.
     LOCAL LaunchSPV0 is ship:AIRSPEED.
     LOCAL LaunchSPT0 is time:SECONDS.
@@ -79,7 +81,7 @@ function planeLaunchSSTO {
 
     planeSwitchAtmo().
 
-    LOCK STEERING TO HEADING(TGTHeading, 0).
+    LOCK STEERING TO HEADING(RunwayEnd:HEADING, 0).
 
     WAIT UNTIL SHIP:AIRSPEED > 90.
     uiConsole("SSTO","Take off...").

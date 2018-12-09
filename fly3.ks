@@ -9,21 +9,35 @@ CLEARVECDRAWS().
 
 LOCAL atmoEngines IS planeAtmoEngines().
 LOCAL vacEngines IS planeVacEngines().
+LOCK TurnRadius TO 500 + SHIP:VELOCITY:SURFACE:MAG * 50.
+LOCK PathDIff TO VXCL(RunwayDir:NORMALIZED, RunwayStart - SHIP:POSITION + BODY:POSITION).
 
-LOCAL tgtHeading IS 90.
-LOCAL steerHeading IS 90.
-LOCAL steerPitch IS 0.
+function calcYawDIff {
+    IF PathDIff:Y < -TurnRadius * 0.25 {
+        return -40.
+    }
+    IF PathDIff:Y > TurnRadius * 0.25 {
+        return 40.
+    }
+    IF PathDIff:Y < -1 {
+        return -ARCCOS((TurnRadius + PathDIff:Y) / TurnRadius).
+    } ELSE IF PathDIff:Y > 1 {
+        return ARCCOS((TurnRadius - PathDIff:Y) / TurnRadius).
+    }
+    return 0.
+}
+
+LOCAL tgtVertical TO 0.
+LOCAL tgtHorizontal TO 200.
+LOCK UPVec TO -BODY:POSITION:NORMALIZED.
+LOCK yawDiff TO calcYawDIff().
+LOCK tgtVelocity TO (RunwayDir:NORMALIZED + V(0, TAN(yawDiff), 0)) * tgtHorizontal + UPVec * tgtVertical.
 LOCAL steerRoll IS 0.
-LOCK steerDir TO HEADING(steerHeading, steerPitch) + R(0, 0, steerRoll).
+LOCK steerDir TO LOOKDIRUP(tgtVelocity:NORMALIZED, UPVec).
 LOCAL steerThrottle IS 0.
 
 LOCK STEERING TO steerDir.
 LOCK THROTTLE TO steerThrottle.
-
-LOCAL throttlePID TO  PIDLOOP(0.01,0.006,0.016,0,1).
-LOCAL hdgPID IS PIDLOOP(0.5, 0.1, 0.8, -15, 15).
-
-LOCK PathDIff TO VXCL(RunwayDir:NORMALIZED, RunwayStart - SHIP:POSITION + BODY:POSITION).
 
 SET runway TO VECDRAW(
       RunwayStart + V(0, 0, 1) + BODY:POSITION,
@@ -76,19 +90,17 @@ INTAKES ON.
 SET steerThrottle TO 1.
 
 WHEN SHIP:AIRSPEED > 90 THEN {
-  SET steerPitch TO 10.
+  SET tgtVertical TO 20.
   return FALSE.
 }
 
 UNTIL SHIP:ALTITUDE > 20000 {
   WAIT 0.
 
-  SET steerHeading TO tgtHeading + hdgPID:UPDATE(TIME:SECONDS, PathDIff:Y).
-
   updateVectors().
 
   PRINT "PathDiff: " + PathDIff + "                  " at (0, 0).
-  PRINT "SteerHeading: " + steerHeading + "              " at (0, 1).
+  PRINT "yawDiff: " + yawDiff + "                  " at (0, 1).
 }
 
 UNLOCK STEERING.
