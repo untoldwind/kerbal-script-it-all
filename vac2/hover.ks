@@ -32,9 +32,9 @@ function vacHoverTo {
         return h.
     }
 
-    LOCAL steerDir IS V(0, 0, 1):DIRECTION.
+    SET steerDir TO V(0, 0, 1):DIRECTION.
     LOCAL throttleVal is 0.
-    LOCK STEERING TO steerDir().
+    LOCK STEERING TO steerDir.
     LOCK THROTTLE to throttleVal.
 
     SET steerDir TO SHIP:UP.

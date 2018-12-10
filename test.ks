@@ -19,7 +19,7 @@ function launch {
 }
 
 function pickup {
-    SET TARGET TO "Meldun's Derelict".
+    SET TARGET TO "Leegard's Wreckage".
     mainframeBiImplusive().
     mainframeMatchVelocities().
     rendezvousApproach().
@@ -81,6 +81,6 @@ function soarDown {
 
 //launch().
 //pickup().
-//deorbit().
-//aeroBreak().
+deorbit().
+aeroBreak().
 soarDown().
