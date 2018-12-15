@@ -6,7 +6,8 @@ function planeLand {
     parameter landingVSpeed IS 5.
 
     LOCAL runwayStartPos IS runwayStart:ALTITUDEPOSITION(runwayStart:TERRAINHEIGHT + 1) - BODY:POSITION.
-    LOCAL runwayDirVec IS (runwayEnd:ALTITUDEPOSITION(runwayStart:TERRAINHEIGHT + 1) - runwayStart:ALTITUDEPOSITION(runwayStart:TERRAINHEIGHT + 1)):NORMALIZED.
+    LOCAL runwayEndPos IS runwayEnd:ALTITUDEPOSITION(runwayEnd:TERRAINHEIGHT + 1) - BODY:POSITION.
+    LOCAL runwayDirVec IS (runwayEndPos - runwayStartPos):NORMALIZED.
     LOCAL touchdownPos IS runwayStartPos + runwayDirVec * 0.1.
     LOCAL runwayUp IS runwayStartPos:NORMALIZED.
     LOCAL ilsFinalTime IS 5000 / landingSpeed.
@@ -28,7 +29,7 @@ function planeLand {
     }
 
     LOCAL targetVec IS ilsVec(ilsPart).
-    LOCAL tgtSpeed IS 500.
+    LOCAL tgtSpeed IS 600.
     LOCAL throttlePID TO  PIDLOOP(0.1,0.001,0.05,0,1).
     LOCAL pitchPID TO  PIDLOOP(0.8,0.02,0.2,-10,20).
     LOCAL roll TO 0.
@@ -52,14 +53,14 @@ function planeLand {
         return (targetAlt - SHIP:ALTITUDE) / dT.
     }
 
-    UNTIL SHIP:STATUS = "LANDED" {
+    UNTIL SHIP:ALTITUDE < 2000 and SHIP:VERTICALSPEED > -1 {
         SET throttleValue TO throttlePID:UPDATE(TIME:SECONDS, SHIP:AIRSPEED - tgtSpeed).
         SET pitch TO pitchPID:UPDATE(TIME:SECONDS, SHIP:VERTICALSPEED - tgtVerticalSpeed()).
 
         IF (distance < 10000 and ilsPart > 1) or (distance < 5000 and ilsPart > 0) {
             SET ilsPart TO ilsPart - 0.1.
             if ilsPart < 1 {
-                SET tgtSpeed TO (1 + 2 * ilsPart) * landingSpeed.
+                SET tgtSpeed TO (1 + 3 * ilsPart) * landingSpeed.
             }            
             SET targetVec TO ilsVec(ilsPart).
 
@@ -67,6 +68,8 @@ function planeLand {
                 SET tgtSpeed TO landingSpeed.
                 GEAR on.
             }
+        } ELSE IF(distance < 1000 and ilsPart <= 0) {
+            SET targetVec TO runwayEndPos.
         }
 
         planeDebugVectors(steerDir, targetVec + BODY:POSITION).
@@ -85,7 +88,7 @@ function planeLand {
         WAIT 0.1.
     }
 
-    BREAKS on.
+    BRAKES on.
     SET throttleValue TO 0.
     LOCK STEERING TO HEADING(runwayEnd:HEADING, 0).
 
