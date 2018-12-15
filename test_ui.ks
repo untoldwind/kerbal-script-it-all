@@ -28,6 +28,13 @@ function onFlyTo2 {
 LOCAL flyTo2Button IS gui:AddButton("Fly to 2").
 SET flyTo2Button:ONCLICK TO onFlyTo2@.
 
+function onLand {
+    SET script TO "test_land".
+}
+
+LOCAL landButton IS gui:AddButton("Land").
+SET landButton:ONCLICK TO onLand@.
+
 function onDump {
     SET script TO "test_dump".
 }

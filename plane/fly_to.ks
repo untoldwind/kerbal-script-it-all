@@ -6,36 +6,25 @@ function planeFlyTo {
 
     LOCAL throttlePID TO  PIDLOOP(0.1,0.001,0.05,0,1).
     LOCAL pitchPID TO  PIDLOOP(0.8,0.02,0.2,-10,20).
+    LOCAL roll TO 0.
     LOCAL pitch TO 10.
     LOCAL throttleValue TO 0.
 
-    function easeHeading {
-        LOCAL speedHeading IS planeHeadingOf(SHIP:VELOCITY:SURFACE).
-        LOCAL targetHeading IS planeHeadingOf(targetVec + BODY:POSITION).
-        LOCAL diff IS utilAngleTo360(targetHeading - speedHeading + 180) - 180.
-
-        if diff < -10 {
-            SET diff TO -10.
-        }
-        if diff > 10 {
-            SET diff TO 10.
-        }
-        return speedHeading + diff.
-    }
-
-    print easeHeading().
-
-    LOCK tgtHeading TO easeHeading().
+    LOCK speedHeading TO planeHeadingOf(SHIP:VELOCITY:SURFACE).
+    LOCK targetHeading TO planeHeadingOf(targetVec + BODY:POSITION).
+    LOCK headingDiff TO utilAngleTo360(targetHeading - speedHeading + 180) - 180.
+    LOCK steerHeading TO speedHeading + MAX(-10, MIN(10, headingDiff)).
+    LOCK roll TO MAX(-45, MIN(45, -headingDiff)).
     LOCK distance TO VXCL(SHIP:UP:VECTOR, targetVec + BODY:POSITION):MAG.
-    LOCK steerDir TO HEADING(tgtHeading, pitch).
+    LOCK steerDir TO HEADING(steerHeading, pitch) + R(0,0,roll).
     LOCK STEERING TO steerDir.
     LOCK THROTTLE TO throttleValue.
 
     function tgtVerticalSpeed {
         LOCAL dT IS distance / SHIP:VELOCITY:SURFACE:MAG.
-        LOCAL altDiff IS SHIP:UP:VECTOR * (targetVec + BODY:POSITION).
+        LOCAL targetAlt IS BODY:ALTITUDEOF(targetVec + BODY:POSITION).
 
-        return altDiff / dT.
+        return (targetAlt - SHIP:ALTITUDE) / dT.
     }
 
     UNTIL distance < 1000 {
@@ -50,6 +39,8 @@ function planeFlyTo {
         print "TgtSpeed : " + tgtSpeed + "                  "  at(0,3).
         print "Speed    : " + SHIP:AIRSPEED + "                  "  at(0,4).
         print "Pitch    : " + pitch + "                  "  at(0,5).
+        print "Roll     : " + roll + "                  "  at(0,6).
+        WAIT 0.1.
     }
 
     UNLOCK STEERING.
