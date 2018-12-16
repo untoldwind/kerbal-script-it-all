@@ -25,7 +25,7 @@ IF mission_state = "inorbit" {
 
     updateMissionState("planed").
 } ELSE IF mission_state = "planed" {
-    mainframeInterplanetaryLambert(true).
+    mainframeExecNode().
 
     updateMissionState("leaving_soi").
 } ELSE IF mission_state = "leaving_soi" {
@@ -37,7 +37,7 @@ IF mission_state = "inorbit" {
 
     updateMissionState("correction_planed").
 } ELSE IF mission_state = "correction_planed" {
-    mainframeCorrectTargetPeriapsis(200000, true).
+    mainframeExecNode().
 
     updateMissionState("in_transit").
 } ELSE IF mission_state = "in_transit" {
