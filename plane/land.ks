@@ -30,7 +30,7 @@ function planeLand {
 
     LOCAL targetVec IS ilsVec(ilsPart).
     LOCAL tgtSpeed IS 600.
-    LOCAL throttlePID TO  PIDLOOP(0.1,0.001,0.05,0,1).
+    LOCAL throttlePID TO  PIDLOOP(0.05,0.001,0.05,0,1).
     LOCAL pitchPID TO  PIDLOOP(0.8,0.02,0.2,-10,20).
     LOCAL roll TO 0.
     LOCAL pitch TO 10.
@@ -46,16 +46,18 @@ function planeLand {
     LOCK STEERING TO steerDir.
     LOCK THROTTLE TO throttleValue.
 
-    function tgtVerticalSpeed {
+    function calcTgtVerticalSpeed {
         LOCAL dT IS distance / SHIP:VELOCITY:SURFACE:MAG.
         LOCAL targetAlt IS BODY:ALTITUDEOF(targetVec + BODY:POSITION).
 
         return (targetAlt - SHIP:ALTITUDE) / dT.
     }
 
+    LOCK tgtVerticalSpeed TO calcTgtVerticalSpeed().
+
     UNTIL SHIP:ALTITUDE < 2000 and SHIP:VERTICALSPEED > -1 {
         SET throttleValue TO throttlePID:UPDATE(TIME:SECONDS, SHIP:AIRSPEED - tgtSpeed).
-        SET pitch TO pitchPID:UPDATE(TIME:SECONDS, SHIP:VERTICALSPEED - tgtVerticalSpeed()).
+        SET pitch TO pitchPID:UPDATE(TIME:SECONDS, SHIP:VERTICALSPEED - tgtVerticalSpeed).
 
         IF (distance < 10000 and ilsPart > 1) or (distance < 5000 and ilsPart > 0) {
             SET ilsPart TO ilsPart - 0.1.
@@ -69,13 +71,14 @@ function planeLand {
                 GEAR on.
             }
         } ELSE IF(distance < 1000 and ilsPart <= 0) {
-            SET targetVec TO runwayEndPos.
+            LOCK steerHeading TO runwayEnd:HEADING.
+            LOCK tgtVerticalSpeed TO -landingVSpeed.
         }
 
         planeDebugVectors(steerDir, targetVec + BODY:POSITION).
 
         print "Distance : " + distance + "                  "  at(0,0).
-        print "TgtVSpeed: " + tgtVerticalSpeed() + "                  "  at(0,1).
+        print "TgtVSpeed: " + tgtVerticalSpeed + "                  "  at(0,1).
         print "VSpeed   : " + SHIP:VERTICALSPEED + "                  "  at(0,2).
         print "TgtSpeed : " + tgtSpeed + "                  "  at(0,3).
         print "Speed    : " + SHIP:AIRSPEED + "                  "  at(0,4).
