@@ -1,6 +1,6 @@
 SWITCH TO ARCHIVE.
 
-BRAKES on.
+BRAKES off.
 
 CLEARGUIS().
 
@@ -34,6 +34,13 @@ function onLand {
 
 LOCAL landButton IS gui:AddButton("Land").
 SET landButton:ONCLICK TO onLand@.
+
+function onDeorbit {
+    SET script TO "test_deorbit".
+}
+
+LOCAL deorbitButton IS gui:AddButton("Deorbit").
+SET deorbitButton:ONCLICK TO onDeorbit@.
 
 function onDump {
     SET script TO "test_dump".

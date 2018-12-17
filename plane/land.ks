@@ -3,7 +3,7 @@ function planeLand {
     parameter runwayStart IS KSCRunwayStart.
     parameter runwayEnd IS KSCRunwayEnd.
     parameter landingSpeed IS 100.
-    parameter landingVSpeed IS 5.
+    parameter landingVSpeed IS 3.
 
     LOCAL runwayStartPos IS runwayStart:ALTITUDEPOSITION(runwayStart:TERRAINHEIGHT + 1) - BODY:POSITION.
     LOCAL runwayEndPos IS runwayEnd:ALTITUDEPOSITION(runwayEnd:TERRAINHEIGHT + 1) - BODY:POSITION.
@@ -31,7 +31,7 @@ function planeLand {
     LOCAL targetVec IS ilsVec(ilsPart).
     LOCAL tgtSpeed IS 600.
     LOCAL throttlePID TO  PIDLOOP(0.05,0.001,0.05,0,1).
-    LOCAL pitchPID TO  PIDLOOP(0.8,0.02,0.2,-10,20).
+    LOCAL pitchPID TO  PIDLOOP(0.8,0.02,0.2,-15,20).
     LOCAL roll TO 0.
     LOCAL pitch TO 10.
     LOCAL throttleValue TO 0.
@@ -70,7 +70,8 @@ function planeLand {
                 SET tgtSpeed TO landingSpeed.
                 GEAR on.
             }
-        } ELSE IF(distance < 1000 and ilsPart <= 0) {
+        } ELSE IF(distance < 800 and ilsPart <= 0) {
+            LOCK roll TO 0.
             LOCK steerHeading TO runwayEnd:HEADING.
             LOCK tgtVerticalSpeed TO -landingVSpeed.
         }
