@@ -8,7 +8,7 @@ function planeLand {
     LOCAL runwayStartPos IS runwayStart:ALTITUDEPOSITION(runwayStart:TERRAINHEIGHT + 1) - BODY:POSITION.
     LOCAL runwayEndPos IS runwayEnd:ALTITUDEPOSITION(runwayEnd:TERRAINHEIGHT + 1) - BODY:POSITION.
     LOCAL runwayDirVec IS (runwayEndPos - runwayStartPos):NORMALIZED.
-    LOCAL touchdownPos IS runwayStartPos + runwayDirVec * 0.15.
+    LOCAL touchdownPos IS runwayStartPos + runwayDirVec * 0.1.
     LOCAL runwayUp IS runwayStartPos:NORMALIZED.
     LOCAL ilsFinalTime IS 5000 / landingSpeed.
     LOCAL ilsFinalStartPos IS (-runwayDirVec * landingSpeed + runwayUp * landingVSpeed) * ilsFinalTime + touchdownPos. 
@@ -29,9 +29,10 @@ function planeLand {
     }
 
     LOCAL targetVec IS ilsVec(ilsPart).
+    LOCAL glideVec IS V(0,0,0).
     LOCAL tgtSpeed IS 600.
     LOCAL throttlePID TO  PIDLOOP(0.05,0.001,0.05,0,1).
-    LOCAL pitchPID TO  PIDLOOP(0.8,0.02,0.2,-15,20).
+    LOCAL pitchPID TO  PIDLOOP(0.8,0.05,0.4,-15,20).
     LOCAL roll TO 0.
     LOCAL pitch TO 10.
     LOCAL throttleValue TO 0.
@@ -46,6 +47,16 @@ function planeLand {
     LOCK STEERING TO steerDir.
     LOCK THROTTLE TO throttleValue.
 
+    function calcGlideDiff {
+        if glideVec:MAG = 0 {
+            return 0.
+        }
+        LOCAL dT IS distance / SHIP:VELOCITY:SURFACE:MAG / 2.
+        LOCAL glideAlt IS BODY:ALTITUDEOF(targetVec + BODY:POSITION + distance * glideVec).
+
+        return (glideAlt - SHIP:ALTITUDE) / dT.
+    }
+
     function calcTgtVerticalSpeed {
         LOCAL dT IS distance / SHIP:VELOCITY:SURFACE:MAG.
         LOCAL targetAlt IS BODY:ALTITUDEOF(targetVec + BODY:POSITION).
@@ -53,7 +64,7 @@ function planeLand {
         return (targetAlt - SHIP:ALTITUDE) / dT.
     }
 
-    LOCK tgtVerticalSpeed TO calcTgtVerticalSpeed().
+    LOCK tgtVerticalSpeed TO calcTgtVerticalSpeed() + calcGlideDiff().
 
     UNTIL SHIP:ALTITUDE < 2000 and SHIP:VERTICALSPEED > -1 {
         SET throttleValue TO throttlePID:UPDATE(TIME:SECONDS, SHIP:AIRSPEED - tgtSpeed).
@@ -63,7 +74,10 @@ function planeLand {
             SET ilsPart TO ilsPart - 0.1.
             if ilsPart < 1 {
                 SET tgtSpeed TO (1 + 3 * ilsPart) * landingSpeed.
-            }            
+            }
+            IF ilsPart < 0.5 {
+                SET glideVec TO (targetVec - ilsVec(ilsPart)):NORMALIZED.
+            }
             SET targetVec TO ilsVec(ilsPart).
 
             IF ilsPart <= 0 {
@@ -88,6 +102,7 @@ function planeLand {
         print "hdgDiff  : " + headingDiff + "                  "  at(0,7).
         print "speedHeading  : " + speedHeading + "                  "  at(0,8).
         print "targetHeading  : " + targetHeading + "                  "  at(0,9).
+        print "glideDiff  : " + calcGlideDiff() + "                  "  at(0,10).
 
         WAIT 0.1.
     }
