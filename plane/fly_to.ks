@@ -5,7 +5,7 @@ function planeFlyTo {
     parameter tgtSpeed.
 
     LOCAL throttlePID TO  PIDLOOP(0.1,0.001,0.05,0,1).
-    LOCAL pitchPID TO  PIDLOOP(0.8,0.05,0.4,-10,20).
+    LOCAL pitchPID TO  PIDLOOP(0.8,0.05,0.6,-10,20).
     LOCAL roll TO 0.
     LOCAL pitch TO 10.
     LOCAL throttleValue TO 0.

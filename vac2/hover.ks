@@ -7,29 +7,37 @@ function vacHoverTo {
     parameter LandLng is 0.
     parameter hoverAlt is 500.
 
+    LOCK FZ TO SHIP:UP:VECTOR.
+    LOCK FX TO SHIP:NORTH:VECTOR.
+    LOCK FY TO VCRS(FX, FZ).
+
     SAS off.
     LOCAL LandingSite is LATLNG(LandLat,LandLng).
 
     uiConsole("VACHOVER", "hoverTo").
 
-    LOCAL ThrottlePID IS PIDLOOP(0.04,0.001,0.01). // Kp, Ki, Kd
+    LOCAL ThrottlePID IS PIDLOOP(0.4,0.05,0.1). // Kp, Ki, Kd
     SET ThrottlePID:MAXOUTPUT TO 1.
     SET ThrottlePID:MINOUTPUT TO 0.
     SET ThrottlePID:SETPOINT TO 0. 
 
-    LOCAL hCorrectX IS pidloop(0.04, 0.001, 0.03, -0.3, 0.3).
-    LOCAL hCorrectY IS pidloop(0.04, 0.001, 0.03, -0.3, 0.3).
+    LOCAL hCorrectX IS pidloop(0.4, 0.1, 0.2, -0.3, 0.3).
+    LOCAL hCorrectY IS pidloop(0.4, 0.1, 0.2, -0.3, 0.3).
 
     LOCAL function calcHDist {
-        LOCAL h IS vxcl(SHIP:UP:VECTOR,LandingSite:POSITION).
-        SET H:Z TO 0.
-        return h.
+        return V(
+            FX * LandingSite:POSITION,
+            FY * LandingSite:POSITION,
+            0
+        ).
     }
 
     LOCAL function calcHVelocity {
-        LOCAL h IS vxcl(SHIP:UP:VECTOR,Ship:VELOCITY:SURFACE).
-        SET H:Z TO 0.
-        return h.
+        return V(
+            FX * Ship:VELOCITY:SURFACE,
+            FY * Ship:VELOCITY:SURFACE,
+            0
+        ).
     }
 
     SET steerDir TO V(0, 0, 1):DIRECTION.
@@ -53,12 +61,12 @@ function vacHoverTo {
             set TargetVSpeed TO -SQRT(radarAlt - hoverAlt).
         }
         
-        LOCAL targetHX IS HDIST:X / 10.
-        LOCAL targetHY IS HDIST:Y / 10.
+        LOCAL targetHX IS MAX(-10, MIN(10, HDIST:X / 15)).
+        LOCAL targetHY IS MAX(-10, MIN(10, HDIST:Y / 15)).
 
         LOCAL dx IS hCorrectX:UPDATE(TIME:SECONDS, ShipHVelocity:X - targetHX ).
         LOCAL dy IS hCorrectY:UPDATE(TIME:SECONDS, ShipHVelocity:Y - targetHY ).
-        LOCAL delta IS V(dx, dy, 0).
+        LOCAL delta IS dx * FX + dy * FY.
 
         SET steerDir TO (SHIP:UP:VECTOR + delta):DIRECTION.
 
@@ -78,16 +86,17 @@ function vacHoverTo {
         print "                                                                    " at (0,11).
     }
 
-    UNTIL radarAlt < 10 {
-        set TargetVSpeed TO -1.
+    UNTIL radarAlt < 10 AND Ship:VERTICALSPEED >= 0 {
+        WAIT 0.
+        set TargetVSpeed to MIN(-1, 5 - sqrt(radarAlt)).
         LOCAL targetHX IS 0.
 
-        LOCAL targetHX IS HDIST:X / 10.
-        LOCAL targetHY IS HDIST:Y / 10.
+        LOCAL targetHX IS MAX(-10, MIN(10, HDIST:X / 15)).
+        LOCAL targetHY IS MAX(-10, MIN(10, HDIST:Y / 15)).
 
         LOCAL dx IS hCorrectX:UPDATE(TIME:SECONDS, ShipHVelocity:X - targetHX ).
         LOCAL dy IS hCorrectY:UPDATE(TIME:SECONDS, ShipHVelocity:Y - targetHY ).
-        LOCAL delta IS V(dx, dy, 0).
+        LOCAL delta IS dx * FX + dy * FY.
 
         SET steerDir TO (SHIP:UP:VECTOR + delta):DIRECTION.
 

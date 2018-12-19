@@ -8,7 +8,7 @@ function planeLand {
     LOCAL runwayStartPos IS runwayStart:ALTITUDEPOSITION(runwayStart:TERRAINHEIGHT + 1) - BODY:POSITION.
     LOCAL runwayEndPos IS runwayEnd:ALTITUDEPOSITION(runwayEnd:TERRAINHEIGHT + 1) - BODY:POSITION.
     LOCAL runwayDirVec IS (runwayEndPos - runwayStartPos):NORMALIZED.
-    LOCAL touchdownPos IS runwayStartPos + runwayDirVec * 0.1.
+    LOCAL touchdownPos IS runwayStartPos + runwayDirVec * 0.001.
     LOCAL runwayUp IS runwayStartPos:NORMALIZED.
     LOCAL ilsFinalTime IS 5000 / landingSpeed.
     LOCAL ilsFinalStartPos IS (-runwayDirVec * landingSpeed + runwayUp * landingVSpeed) * ilsFinalTime + touchdownPos. 
@@ -32,7 +32,7 @@ function planeLand {
     LOCAL glideVec IS V(0,0,0).
     LOCAL tgtSpeed IS 600.
     LOCAL throttlePID TO  PIDLOOP(0.05,0.001,0.05,0,1).
-    LOCAL pitchPID TO  PIDLOOP(0.8,0.05,0.4,-15,20).
+    LOCAL pitchPID TO  PIDLOOP(0.8,0.05,0.6,-15,20).
     LOCAL roll TO 0.
     LOCAL pitch TO 10.
     LOCAL throttleValue TO 0.
