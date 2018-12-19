@@ -43,7 +43,7 @@ IF mission_state = "inorbit" {
 } ELSE IF mission_state = "in_transit" {
     mainframeTransfer().
 
-    mainframeChangePeriapsis(500000).
+    mainframeChangePeriapsis(700000).
     mainframeCircularize().
 
     updateMissionState("in_orbit_eve").

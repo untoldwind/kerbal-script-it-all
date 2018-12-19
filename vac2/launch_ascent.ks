@@ -15,6 +15,7 @@ function vacLaunchAscent {
 	LOCAL launch_gt0 is SHIP:ALTITUDE.
 	LOCAL launch_gt1 is targetApoapsis * 0.3. 
 
+	SAS off.
     UNLOCK all.
 
 	// Steering function for continuous lock.
