@@ -8,7 +8,7 @@ function planeLand {
     LOCAL runwayStartPos IS runwayStart:ALTITUDEPOSITION(runwayStart:TERRAINHEIGHT + 1) - BODY:POSITION.
     LOCAL runwayEndPos IS runwayEnd:ALTITUDEPOSITION(runwayEnd:TERRAINHEIGHT + 1) - BODY:POSITION.
     LOCAL runwayDirVec IS (runwayEndPos - runwayStartPos):NORMALIZED.
-    LOCAL touchdownPos IS runwayStartPos + runwayDirVec * 0.001.
+    LOCAL touchdownPos IS runwayStartPos - runwayDirVec * 0.03.
     LOCAL runwayUp IS runwayStartPos:NORMALIZED.
     LOCAL ilsFinalTime IS 5000 / landingSpeed.
     LOCAL ilsFinalStartPos IS (-runwayDirVec * landingSpeed + runwayUp * landingVSpeed) * ilsFinalTime + touchdownPos. 

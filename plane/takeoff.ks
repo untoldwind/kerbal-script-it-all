@@ -4,7 +4,7 @@ function planeTakeoff {
     parameter takeoffSpeed IS 90.
 
     LOCAL tgtHeading TO runwayEnd:HEADING.
-    LOCAL tgtPitch TO 0.
+    LOCAL tgtPitch TO -2.
     LOCAL tgtThrottle TO 0.
 
     STAGE.

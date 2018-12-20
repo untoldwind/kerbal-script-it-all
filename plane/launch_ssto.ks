@@ -81,7 +81,7 @@ function planeLaunchSSTO {
 
     planeSwitchAtmo().
 
-    LOCK STEERING TO HEADING(RunwayEnd:HEADING, 0).
+    LOCK STEERING TO HEADING(RunwayEnd:HEADING, -2).
 
     WAIT UNTIL SHIP:AIRSPEED > 90.
     uiConsole("SSTO","Take off...").
