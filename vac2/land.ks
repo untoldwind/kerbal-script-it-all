@@ -2,6 +2,7 @@ RUNONCEPATH("/core/lib_ui").
 RUNONCEPATH("/core/lib_util").
 RUNONCEPATH("/core/lib_warp").
 RUNONCEPATH("/vac2/lib_land").
+RUNONCEPATH("/vac2/hover").
 RUNONCEPATH("/mainframe/exec_node").
 
 
@@ -10,6 +11,7 @@ function vacLand {
     parameter LandLng is 0.
     parameter breakZero is true.
     parameter landingStage is -1.
+    parameter hoverLand is false.
 
     uiConsole("VACLAND", "Start").
     clearvecdraws().
@@ -44,7 +46,11 @@ function vacLand {
         if breakZero {
             vacBreakZero().
         }
-        vacTouchdown().
+        if hoverLand {
+            vacHoverTo(LandLat, LandLng).
+        } else {
+            vacTouchdown().
+        }
     }
 
     addons:mainframe:landing:prediction_stop().
