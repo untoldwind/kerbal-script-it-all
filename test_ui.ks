@@ -49,6 +49,9 @@ function onDump {
 LOCAL dumpButton IS gui:AddButton("Dump").
 SET dumpButton:ONCLICK TO onDump@.
 
+SET STEERINGMANAGER:YAWTS TO 4.
+SET STEERINGMANAGER:PITCHTS TO 4.
+
 until false {
     SET script TO "".
 

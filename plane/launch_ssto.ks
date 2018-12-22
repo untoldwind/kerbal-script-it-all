@@ -21,8 +21,7 @@ function planeLaunchSSTO {
     Local AirBreathingAlt is 23000.     // From this altitude and up, dual-mode engines will change to closed cycle. 
     Local ThrottleValue is 0.
 
-    LOCAL atmoEngines IS planeAtmoEngines().
-    LOCAL vacEngines IS planeVacEngines().
+    LOCAL toggleEngines IS planeMultiModeEngines().
 
     // Functions.
     function ClimbAcc {
@@ -53,7 +52,7 @@ function planeLaunchSSTO {
         Return false.
     }
 
-    when atmoEngines[0]:IGNITION and atmoEngines[0]:FLAMEOUT then {
+    when toggleEngines[0]:IGNITION and toggleEngines[0]:FLAMEOUT then {
         uiConsole("SSTO", "Switch vac").
         planeSwitchVac().
         return false.
@@ -100,7 +99,7 @@ function planeLaunchSSTO {
     Lock Steering to Heading (TGTHeading,PitchAngle).
     Lock PercentGT to MIN( 1, SHIP:ALTITUDE / GTAltitude).
 
-    UNTIL SHIP:Apoapsis > TGTApoapsis {
+    UNTIL SHIP:Apoapsis > TGTApoapsis or ship:altitude > body:atm:height {
         set LaunchSPT0 to Time:Seconds.
         set LaunchSPV0 to Ship:AIRSPEED.
         set ThrottleValue to ascentThrottle().

@@ -8,12 +8,12 @@ function planeLand {
     LOCAL runwayStartPos IS runwayStart:ALTITUDEPOSITION(runwayStart:TERRAINHEIGHT + 1) - BODY:POSITION.
     LOCAL runwayEndPos IS runwayEnd:ALTITUDEPOSITION(runwayEnd:TERRAINHEIGHT + 1) - BODY:POSITION.
     LOCAL runwayDirVec IS (runwayEndPos - runwayStartPos):NORMALIZED.
-    LOCAL touchdownPos IS runwayStartPos - runwayDirVec * 0.03.
+    LOCAL touchdownPos IS runwayStartPos - runwayDirVec * 0.2.
     LOCAL runwayUp IS runwayStartPos:NORMALIZED.
     LOCAL ilsFinalTime IS 5000 / landingSpeed.
     LOCAL ilsFinalStartPos IS (-runwayDirVec * landingSpeed + runwayUp * landingVSpeed) * ilsFinalTime + touchdownPos. 
     LOCAL ilsNearStartPos IS (-runwayDIrVec * 40000 + runwayUp * 4000) + ilsFinalStartPos.
-    LOCAL ilsFarStartPos IS (-runwayDirVec * 50000 + runwayUp * 6000) + ilsNearStartPos.
+    LOCAL ilsFarStartPos IS (-runwayDirVec * 50000 + runwayUp * 5000) + ilsNearStartPos.
     LOCAL ilsPart IS 2.
 
     function ilsVec {
@@ -66,7 +66,7 @@ function planeLand {
 
     LOCK tgtVerticalSpeed TO calcTgtVerticalSpeed() + calcGlideDiff().
 
-    UNTIL SHIP:ALTITUDE < 2000 and SHIP:VERTICALSPEED > -1 {
+    UNTIL SHIP:ALTITUDE < 500 and SHIP:VERTICALSPEED > -1 {
         SET throttleValue TO throttlePID:UPDATE(TIME:SECONDS, SHIP:AIRSPEED - tgtSpeed).
         SET pitch TO pitchPID:UPDATE(TIME:SECONDS, SHIP:VERTICALSPEED - tgtVerticalSpeed).
 

@@ -13,12 +13,15 @@ function planeMMEngineClosedCycle {
     }
 }
 
-function planeVacEngines {
-    return SHIP:PARTSTAGGED("vac").
-}
+function planeMultiModeEngines {
+    LOCAL result is LIST().
 
-function planeAtmoEngines {
-    return SHIP:PARTSTAGGED("atmo").
+    for p in ship:parts {
+        if p:modules:contains("MultiModeEngine") {
+            result:ADD(p).
+        }
+    }
+    return result.
 }
 
 function planeSwitchAtmo {
@@ -31,7 +34,7 @@ function planeSwitchAtmo {
         IF p:TYPENAME = "Engine" {
             p:ACTIVATE.
             if p:modules:contains("MultiModeEngine") {
-            local m is p:getModule("MultiModeEngine").
+                local m is p:getModule("MultiModeEngine").
                 if m:HasField("mode") and m:GetField("mode"):Contains("Closed") {
                     for Event in m:allEventNames() {
                         if Event:contains("toggle") m:DoEvent(Event).
