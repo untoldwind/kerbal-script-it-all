@@ -5,6 +5,7 @@ function planeLand {
     parameter landingSpeed IS 100.
     parameter landingVSpeed IS 3.
 
+    LOCAL DrawDebugVectors is false.
     LOCAL runwayStartPos IS runwayStart:ALTITUDEPOSITION(runwayStart:TERRAINHEIGHT + 1) - BODY:POSITION.
     LOCAL runwayEndPos IS runwayEnd:ALTITUDEPOSITION(runwayEnd:TERRAINHEIGHT + 1) - BODY:POSITION.
     LOCAL runwayDirVec IS (runwayEndPos - runwayStartPos):NORMALIZED.
@@ -90,19 +91,21 @@ function planeLand {
             LOCK tgtVerticalSpeed TO -landingVSpeed.
         }
 
-        planeDebugVectors(steerDir, targetVec + BODY:POSITION).
+        if DrawDebugVectors {
+            planeDebugVectors(steerDir, targetVec + BODY:POSITION).
 
-        print "Distance : " + distance + "                  "  at(0,0).
-        print "TgtVSpeed: " + tgtVerticalSpeed + "                  "  at(0,1).
-        print "VSpeed   : " + SHIP:VERTICALSPEED + "                  "  at(0,2).
-        print "TgtSpeed : " + tgtSpeed + "                  "  at(0,3).
-        print "Speed    : " + SHIP:AIRSPEED + "                  "  at(0,4).
-        print "Pitch    : " + pitch + "                  "  at(0,5).
-        print "Roll     : " + roll + "                  "  at(0,6).
-        print "hdgDiff  : " + headingDiff + "                  "  at(0,7).
-        print "speedHeading  : " + speedHeading + "                  "  at(0,8).
-        print "targetHeading  : " + targetHeading + "                  "  at(0,9).
-        print "glideDiff  : " + calcGlideDiff() + "                  "  at(0,10).
+            print "Distance : " + distance + "                  "  at(0,0).
+            print "TgtVSpeed: " + tgtVerticalSpeed + "                  "  at(0,1).
+            print "VSpeed   : " + SHIP:VERTICALSPEED + "                  "  at(0,2).
+            print "TgtSpeed : " + tgtSpeed + "                  "  at(0,3).
+            print "Speed    : " + SHIP:AIRSPEED + "                  "  at(0,4).
+            print "Pitch    : " + pitch + "                  "  at(0,5).
+            print "Roll     : " + roll + "                  "  at(0,6).
+            print "hdgDiff  : " + headingDiff + "                  "  at(0,7).
+            print "speedHeading  : " + speedHeading + "                  "  at(0,8).
+            print "targetHeading  : " + targetHeading + "                  "  at(0,9).
+            print "glideDiff  : " + calcGlideDiff() + "                  "  at(0,10).
+        }
 
         WAIT 0.1.
     }

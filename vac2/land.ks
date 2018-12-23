@@ -141,7 +141,7 @@ function vacCourseCorrection {
 function vacDecelerationBurn {
     uiConsole("VACLAND", "Deceleration Burn").
 
-    LOCAL DrawDebugVectors is true.
+    LOCAL DrawDebugVectors is false.
 
     LOCAL ThrottlePID IS PIDLOOP(0.04,0.001,0.01). // Kp, Ki, Kd
     SET ThrottlePID:MAXOUTPUT TO 1.
@@ -218,7 +218,7 @@ function vacTouchdown {
 
     uiConsole("VACLAND", "Touchdown").
 
-    LOCAL DrawDebugVectors is true.
+    LOCAL DrawDebugVectors is false.
         
     LOCAL ThrottlePID IS PIDLOOP(0.04,0.001,0.01). // Kp, Ki, Kd
     SET ThrottlePID:MAXOUTPUT TO 1.

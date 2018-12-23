@@ -4,6 +4,7 @@ function planeFlyTo {
     parameter targetVec.
     parameter tgtSpeed.
 
+    LOCAL DrawDebugVectors is false.
     LOCAL throttlePID TO  PIDLOOP(0.1,0.001,0.05,0,1).
     LOCAL pitchPID TO  PIDLOOP(0.8,0.05,0.6,-10,20).
     LOCAL roll TO 0.
@@ -31,15 +32,17 @@ function planeFlyTo {
         SET throttleValue TO throttlePID:UPDATE(TIME:SECONDS, SHIP:AIRSPEED - tgtSpeed).
         SET pitch TO pitchPID:UPDATE(TIME:SECONDS, SHIP:VERTICALSPEED - tgtVerticalSpeed()).
 
-        planeDebugVectors(steerDir, targetVec + BODY:POSITION).
+        if DrawDebugVectors {
+            planeDebugVectors(steerDir, targetVec + BODY:POSITION).
 
-        print "Distance : " + distance + "                  "  at(0,0).
-        print "TgtVSpeed: " + tgtVerticalSpeed() + "                  "  at(0,1).
-        print "VSpeed   : " + SHIP:VERTICALSPEED + "                  "  at(0,2).
-        print "TgtSpeed : " + tgtSpeed + "                  "  at(0,3).
-        print "Speed    : " + SHIP:AIRSPEED + "                  "  at(0,4).
-        print "Pitch    : " + pitch + "                  "  at(0,5).
-        print "Roll     : " + roll + "                  "  at(0,6).
+            print "Distance : " + distance + "                  "  at(0,0).
+            print "TgtVSpeed: " + tgtVerticalSpeed() + "                  "  at(0,1).
+            print "VSpeed   : " + SHIP:VERTICALSPEED + "                  "  at(0,2).
+            print "TgtSpeed : " + tgtSpeed + "                  "  at(0,3).
+            print "Speed    : " + SHIP:AIRSPEED + "                  "  at(0,4).
+            print "Pitch    : " + pitch + "                  "  at(0,5).
+            print "Roll     : " + roll + "                  "  at(0,6).
+        }
         WAIT 0.1.
     }
 
