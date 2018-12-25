@@ -47,7 +47,7 @@ IF mission_state = "inorbit" {
     mainframeCircularize().
 
     updateMissionState("in_orbit_eve").
- } ELSE IF mission_state = "in_orbit_eve" {
+} ELSE IF mission_state = "in_orbit_eve" {
     mainframeChangeInclination(90).
 
     updateMissionState("in_polar_eve").

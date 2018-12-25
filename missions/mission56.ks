@@ -47,4 +47,28 @@ IF mission_state = "inorbit" {
     mainframeCircularize().
 
     updateMissionState("in_orbit_duna").
+} ELSE IF mission_state = "in_orbit_duna" {
+    mainframeChangeInclination(90).
+
+    updateMissionState("in_polar_duna").
+} ELSE IF mission_state = "in_polar_duna" {
+    SET TARGET to Ike.
+
+    mainframeBiImplusive().
+
+    updateMissionState("intransit_ike").
+}
+
+IF mission_state = "intransit_ike" {
+    mainframeTransfer().
+    mainframeChangePeriapsis(150000).
+    mainframeCircularize().
+
+    updateMissionState("in_orbit_ike").
+}
+
+IF mission_state = "in_orbit_ike" {
+    mainframeChangeInclination(90).
+
+    updateMissionState("in_polar_ike").
 }
