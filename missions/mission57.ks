@@ -52,3 +52,4 @@ IF mission_state = "inorbit" {
 
     updateMissionState("in_polar_eve").
 }
+
