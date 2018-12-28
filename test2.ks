@@ -1,5 +1,7 @@
+RUNONCEPATH("/mainframe/lib").
+RUNONCEPATH("/atmo/launch_ascent").
+RUNONCEPATH("/core/lib_warp").
 RUNONCEPATH("/vac2/lib").
+RUNONCEPATH("/rendezvous/dock").
 
-SET TARGET TO "Land Target".
-LOCAL LandSite IS TARGET:GEOPOSITION.
-vacHoverTo(LandSite:LAT, LandSite:LNG, 50).
+rendezvousDock().
