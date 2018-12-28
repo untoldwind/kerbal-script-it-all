@@ -66,6 +66,28 @@ function mainframeMatchVelocities {
     mainframeExecNode().
 }
 
+function mainframeCorrectTarget {
+    parameter exec IS true.
+
+    uiConsole("MAINFRAME", "Correct Target").
+    if not HASTARGET or TARGET:TYPENAME <> "Body" {
+        uiError("MAINFRAME", "No target body").
+        return.
+    }
+    utilRemoveNodes().
+
+    ADD ADDONS:MainFrame:MANEUVERS:CHEAPEST_CORRECTION(TARGET).
+
+    IF exec {
+        WAIT 0.
+
+        mainframeExecNode().
+    } ELSE IF ADDONS:AVAILABLE("KAC") {
+        SET alarm TO addAlarm("ManeuverAuto", TIME:SECONDS + NEXTNODE:ETA - 600, ship:NAME, "Couse correction to " + target:Name).
+        SET alarm:MARGIN TO 600.
+    }
+}
+
 function mainframeCorrectTargetPeriapsis {
     parameter targetPeriapsis.
     parameter exec IS true.
