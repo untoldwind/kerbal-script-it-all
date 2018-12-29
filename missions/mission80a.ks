@@ -1,25 +1,18 @@
 RUNONCEPATH("/mainframe/lib").
-RUNONCEPATH("/atmo/launch_ascent").
-RUNONCEPATH("/core/lib_warp").
-RUNONCEPATH("/vac2/lib").
-
-
-SET STEERINGMANAGER:YAWTS TO 4.
-SET STEERINGMANAGER:PITCHTS TO 4.
+RUNONCEPATH("/plane/lib").
+RUNONCEPATH("/rendezvous/lib").
 
 mainframeEnsure().
 
 IF mission_state = "launch" {
-    LIGHTS ON.
-    PRINT "Launch sequence".
-    atmoLaunchAscent(120000).
+    planeLaunchSSTO(90000).
     mainframeCircularize().
 
     updateMissionState("inorbit").
 }
 
 IF mission_state = "inorbit" {
-    SET TARGET TO Minmus.
+    SET TARGET TO Mun.
     mainframeBiImplusive().
 
     updateMissionState("intransit_mun").
@@ -45,13 +38,31 @@ IF mission_state = "entered_munsoi" {
 }
 
 IF mission_state = "inorbit_mun" {
-    UNTIL STAGE:NUMBER = 0 {
-        WAIT UNTIL STAGE:READY.
-        STAGE.
-    }
-    SET TARGET TO "Minmus Assembly".
-    LOCAL LandSite IS TARGET:GEOPOSITION.
-    vacLand(LandSite:LAT, LandSite:LNG, false, -1, true).
+    SET TARGET TO "Lem's Pod".
+
+    mainframeBiImplusive().
+    mainframeMatchVelocities().
+    rendezvousApproach().
+
+    updateMissionState("at_target1").
+} ELSE IF mission_state = "at_target1" {
+    mainframeReturnFromMoon(180000).
+
+    updateMissionState("transfer_back").
+}
+
+IF mission_state = "transfer_back" {
+    mainframeTransfer().
+    mainframeChangePeriapsis(85000).
+    mainframeChangeApoapsis(85000, TIME + ETA:PERIAPSIS).
+
+    updateMissionState("in_orbit_back").
+}
+
+IF mission_state = "in_orbit_back" {
+    planeDeorbit().
+    planeAerobrake().
+    planeLand().
 
     updateMissionState("done").
 }

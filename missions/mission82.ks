@@ -38,20 +38,16 @@ IF mission_state = "corrected_transit" {
 }
 
 IF mission_state = "entered_munsoi" {
-    mainframeChangePeriapsis(60000).
+    mainframeChangePeriapsis(50000).
     mainframeCircularize().
 
     updateMissionState("inorbit_mun").
 }
 
 IF mission_state = "inorbit_mun" {
-    UNTIL STAGE:NUMBER = 0 {
-        WAIT UNTIL STAGE:READY.
-        STAGE.
-    }
-    SET TARGET TO "Minmus Assembly".
+    SET TARGET TO "Minmus Base 1".
     LOCAL LandSite IS TARGET:GEOPOSITION.
-    vacLand(LandSite:LAT, LandSite:LNG, false, -1, true).
+    vacLand(LandSite:LAT, LandSite:LNG).
 
     updateMissionState("done").
 }

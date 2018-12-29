@@ -12,7 +12,7 @@ IF mission_state = "launch" {
 }
 
 IF mission_state = "inorbit" {
-    SET TARGET TO "Eriford's Pod".
+    SET TARGET TO "Corsy's Shipwreck".
 
     mainframeBiImplusive().
     mainframeMatchVelocities().
