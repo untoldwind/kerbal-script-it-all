@@ -4,6 +4,7 @@ RUNONCEPATH("/rendezvous/lib_dock").
 
 function rendezvousDepart {
     Parameter DockPort is 0. 
+    Parameter direction is -1.
 
     local DepartDistance is 90.
     local DepartSpeed is 3.
@@ -31,7 +32,7 @@ function rendezvousDepart {
         local lock TargetSpeed to -(target:velocity:orbit - ship:velocity:orbit). 
         until TargetSpeed:mag >= DepartSpeed or Target:Distance >= DepartDistance {
             local Thrust is min(1,max(0.1,DepartSpeed-TargetSpeed:mag)).
-            set ship:control:translation to v(0,0,-Thrust).
+            set ship:control:translation to v(0,0, direction * Thrust).
             wait 0.
         }
         set ship:control:translation to v(0,0,0).
