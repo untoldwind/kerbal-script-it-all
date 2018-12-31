@@ -64,7 +64,7 @@ IF mission_state = "entered_munsoi" {
     updateMissionState("inorbit_mun").
 }
 
-IF mission_state = "inorbit_mun" {
+IF mission_state = "inorbit_mun1" {
     SET TARGET TO "Minmus Reactor".
     LOCAL LandSite IS TARGET:GEOPOSITION.
     vacLand(LandSite:LAT, LandSite:LNG, true, -1, true).
@@ -72,7 +72,7 @@ IF mission_state = "inorbit_mun" {
     updateMissionState("landed").
 }
 
-IF mission_state = "inorbit_mun1" {
+IF mission_state = "inorbit_mun" {
     SET TARGET TO "Minmus Station 1".
 
     mainframeBiImplusive().

@@ -86,7 +86,7 @@ function vacHoverTo {
         print "                                                                    " at (0,11).
     }
 
-    UNTIL radarAlt < 10 AND Ship:VERTICALSPEED >= 0 {
+    UNTIL radarAlt < 100 AND Ship:VERTICALSPEED >= 0 {
         WAIT 0.
         set TargetVSpeed to MIN(-1, 5 - sqrt(radarAlt)).
         LOCAL targetHX IS 0.
