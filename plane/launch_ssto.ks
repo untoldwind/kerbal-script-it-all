@@ -66,7 +66,10 @@ function planeLaunchSSTO {
 
     // Take off
     clearscreen.
+    STAGE.
     uiConsole("SSTO","Start engines...").
+    planeDisarmsChutes().
+    planeSwitchAtmo().
     BRAKES OFF.
     SAS OFF.
     RCS OFF.
@@ -76,9 +79,7 @@ function planeLaunchSSTO {
 
     Set ThrottleValue to 1.
     LOCK THROTTLE TO ThrottleValue.
-    STAGE.
 
-    planeSwitchAtmo().
 
     LOCK STEERING TO HEADING(RunwayEnd:HEADING, -2).
 

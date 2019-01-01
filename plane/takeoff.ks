@@ -8,6 +8,7 @@ function planeTakeoff {
     LOCAL tgtThrottle TO 0.
 
     STAGE.
+    planeDisarmsChutes().
     BRAKES OFF.
     SAS OFF.
     RCS OFF.

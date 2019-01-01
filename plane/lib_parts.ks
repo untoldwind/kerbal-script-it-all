@@ -57,3 +57,7 @@ function planeSwitchVac {
         }
     }
 }
+
+function planeDisarmsChutes {
+    return partsDoEvent("ModuleParachute", "disarm").
+}

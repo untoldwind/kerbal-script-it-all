@@ -5,6 +5,10 @@ function planeLand {
     parameter landingSpeed IS 100.
     parameter landingVSpeed IS 3.
 
+    planeSwitchAtmo().
+    partsRetractSolarPanels().
+    partsRetractAntennas().
+
     LOCAL DrawDebugVectors is false.
     LOCAL runwayStartPos IS runwayStart:ALTITUDEPOSITION(runwayStart:TERRAINHEIGHT + 1) - BODY:POSITION.
     LOCAL runwayEndPos IS runwayEnd:ALTITUDEPOSITION(runwayEnd:TERRAINHEIGHT + 1) - BODY:POSITION.
@@ -111,6 +115,7 @@ function planeLand {
     }
 
     BRAKES on.
+    CHUTES on.
     SET throttleValue TO 0.
     LOCK STEERING TO HEADING(runwayEnd:HEADING, 0).
 

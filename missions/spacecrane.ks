@@ -20,10 +20,8 @@ IF mission_state = "launch" {
 }
 
 IF mission_state = "inorbit" {
-    SET TARGET TO "Mission 85 Debris".
+    SET TARGET TO "Mission 84a Station".
 
-    mainframeChangeApoapsis(200000).
-    mainframeCircularize().
     mainframeBiImplusive().
     mainframeMatchVelocities().
     rendezvousApproach().
@@ -35,10 +33,8 @@ IF mission_state = "at_target" {
     rendezvousDock().
 
     updateMissionState("docked").
-}
-
-IF mission_state = "dockedm" {
-    SET TARGET TO Minmus.
+} ELSE IF mission_state = "docked" {
+    SET TARGET TO Mun.
 
     mainframeBiImplusive().
 
@@ -73,7 +69,7 @@ IF mission_state = "inorbit_mun1" {
 }
 
 IF mission_state = "inorbit_mun" {
-    SET TARGET TO "Minmus Station 1".
+    SET TARGET TO "Mun Station 1".
 
     mainframeBiImplusive().
     mainframeMatchVelocities().
@@ -87,7 +83,7 @@ IF mission_state = "at_station" {
 
     updateMissionState("docked_station").
 } ELSE IF mission_state = "docked_station" {
-    rendezvousDepart(0, 1).
+    rendezvousDepart(0, -1).
 
     updateMissionState("undocked").
 }
@@ -99,8 +95,6 @@ IF mission_state = "undocked" {
 }
 
 IF mission_state = "transfer_back" {
-    mainframeReturnFromMoon(180000).
-
     mainframeTransfer().
     mainframeChangePeriapsis(150000).
     mainframeChangeApoapsis(150000, TIME + ETA:PERIAPSIS).

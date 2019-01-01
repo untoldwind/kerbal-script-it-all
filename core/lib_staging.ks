@@ -5,6 +5,9 @@ LIST ENGINES IN all_engines.
 
 function stagingCheck {
 	LOCAL staging IS false.
+	IF STAGE:NUMBER = 0 {
+		return false.
+	}
 	FOR eng IN all_engines {
 		IF eng:IGNITION and eng:FLAMEOUT {
 			SET staging TO true.
@@ -16,5 +19,5 @@ function stagingCheck {
 		WAIT 0.5.
 		LIST ENGINES IN all_engines.
 	}
-
+	return staging.
 }
