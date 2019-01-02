@@ -15,13 +15,8 @@ IF mission_state = "launch" {
 }
 
 IF mission_state = "inorbit" {
-    UNTIL STAGE:NUMBER = 0 {
-        WAIT UNTIL STAGE:READY.
-        STAGE.
-    }
-
     SET TARGET to Jool.
-    mainframeInterplanetaryLambert(false).
+    mainframeInterplanetaryBiImpulsive(false).
 
     updateMissionState("planed").
 } ELSE IF mission_state = "planed" {

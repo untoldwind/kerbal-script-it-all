@@ -20,7 +20,7 @@ IF mission_state = "launch" {
 }
 
 IF mission_state = "inorbit" {
-    SET TARGET TO "Mission 84a Station".
+    SET TARGET TO "Mission 87 Lander".
 
     mainframeBiImplusive().
     mainframeMatchVelocities().
@@ -34,7 +34,7 @@ IF mission_state = "at_target" {
 
     updateMissionState("docked").
 } ELSE IF mission_state = "docked" {
-    SET TARGET TO Mun.
+    SET TARGET TO Minmus.
 
     mainframeBiImplusive().
 
@@ -69,7 +69,7 @@ IF mission_state = "inorbit_mun1" {
 }
 
 IF mission_state = "inorbit_mun" {
-    SET TARGET TO "Mun Station 1".
+    SET TARGET TO "Minmus Station 1".
 
     mainframeBiImplusive().
     mainframeMatchVelocities().

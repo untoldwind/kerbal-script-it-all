@@ -196,3 +196,20 @@ function mainframeInterplanetaryLambert {
         SET alarm:MARGIN TO 600.
     }
 }
+
+function mainframeInterplanetaryBiImpulsive {
+    parameter exec IS TRUE.
+    parameter maxUT IS 7200000.
+
+    utilRemoveNodes().
+
+    ADD ADDONS:MainFrame:MANEUVERS:INTERPLANETARY_BIIMPULSIVE(target, maxUT).
+    IF exec {
+        WAIT 0.
+
+        mainframeExecNode().
+    } ELSE IF ADDONS:AVAILABLE("KAC") {
+        SET alarm TO addAlarm("ManeuverAuto", TIME:SECONDS + NEXTNODE:ETA - 600, ship:NAME, "Exit orbit to " + target:Name).
+        SET alarm:MARGIN TO 600.
+    }
+}
