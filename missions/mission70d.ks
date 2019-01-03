@@ -21,8 +21,7 @@ IF mission_state = "inorbit" {
 
     updateMissionState("at_target1").
 } ELSE IF mission_state = "at_target1" {
-    mainframeChangePeriapsis(150000).
-    mainframeChangeApoapsis(150000, TIME + ETA:PERIAPSIS).
+    mainframeChangeApoapsis(150000, TIME + 240).
     mainframeCircularize().
 
     updateMissionState("inorbit2").

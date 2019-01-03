@@ -5,7 +5,10 @@ RUNONCEPATH("/vac2/lib").
 RUNONCEPATH("/rendezvous/dock").
 RUNONCEPATH("/plane/lib").
 
-rendezvousDock().
+SET TARGET to Duna.
+mainframeInterplanetaryBiImpulsive(false).
+
+//rendezvousDock().
 
 //planeDisarmsChutes().
 //planeSwitchAtmo().
