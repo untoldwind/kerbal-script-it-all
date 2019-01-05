@@ -20,7 +20,7 @@ IF mission_state = "transfer_out" {
 }
 
 IF mission_state = "hi_orbit" {
-    SET TARGET to Duna.
+    SET TARGET to Dres.
     mainframeInterplanetaryBiImpulsive(false).
 
     updateMissionState("planed").
@@ -46,5 +46,5 @@ IF mission_state = "hi_orbit" {
     mainframeChangePeriapsis(20000).
     mainframeCircularize().
 
-    updateMissionState("in_orbit_dres").
+    updateMissionState("in_orbit_duna").
 }

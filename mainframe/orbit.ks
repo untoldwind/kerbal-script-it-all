@@ -70,8 +70,8 @@ function mainframeCorrectTarget {
     parameter exec IS true.
 
     uiConsole("MAINFRAME", "Correct Target").
-    if not HASTARGET or TARGET:TYPENAME <> "Body" {
-        uiError("MAINFRAME", "No target body").
+    if not HASTARGET {
+        uiError("MAINFRAME", "No target").
         return.
     }
     utilRemoveNodes().

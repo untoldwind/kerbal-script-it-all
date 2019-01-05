@@ -12,7 +12,7 @@ IF mission_state = "launch" {
 }
 
 IF mission_state = "inorbit" {
-    SET TARGET TO "Jerbart's Wreckage".
+    SET TARGET TO "Zelul's Shipwreck".
 
     mainframeBiImplusive().
 
@@ -28,7 +28,22 @@ IF mission_state = "inorbit" {
 }
 
 IF mission_state = "inorbit2" {
-    SET TARGET TO "Keldun's Derelict".
+    SET TARGET TO "Joedas' Capsule".
+
+    mainframeBiImplusive().
+    mainframeMatchVelocities().
+    rendezvousApproach().
+
+    updateMissionState("at_target2").
+} ELSE IF mission_state = "at_target2" {
+    mainframeChangeApoapsis(150000, TIME + 240).
+    mainframeCircularize().
+
+    updateMissionState("inorbit3").
+}
+
+IF mission_state = "inorbit3" {
+    SET TARGET TO "Aganey's Derelict".
 
     mainframeBiImplusive().
     mainframeMatchVelocities().
