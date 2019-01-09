@@ -28,6 +28,7 @@ function vacLand {
                 WAIT UNTIL STAGE:READY.
                 STAGE.
             }
+            vacBalance().
         }
     }
 

@@ -33,7 +33,7 @@ IF mission_state = "hi_orbit" {
 
     updateMissionState("soi_exit").
 } ELSE IF mission_state = "soi_exit" {
-    mainframeCorrectTargetPeriapsis(20000, false).
+    mainframeCorrectTargetPeriapsis(600000, false).
 
     updateMissionState("correction_planed").
 } ELSE IF mission_state = "correction_planed" {
@@ -43,8 +43,13 @@ IF mission_state = "hi_orbit" {
 } ELSE IF mission_state = "in_transit" {
     mainframeTransfer().
 
-    mainframeChangePeriapsis(20000).
+    mainframeChangePeriapsis(600000, TIME + 240).
     mainframeCircularize().
 
     updateMissionState("in_orbit_dres").
+} ELSE IF mission_state = "in_orbit_dres" {
+    SET TARGET to Kerbin.
+    mainframeInterplanetaryBiImpulsive(false).
+
+    updateMissionState("planed_return").
 }

@@ -20,7 +20,7 @@ IF mission_state = "launch" {
 }
 
 IF mission_state = "inorbit" {
-    SET TARGET TO "Mission 91 Lander".
+    SET TARGET TO "Mission 91a Lander".
 
     mainframeBiImplusive().
     mainframeMatchVelocities().

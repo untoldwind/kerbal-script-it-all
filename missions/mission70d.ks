@@ -12,14 +12,14 @@ IF mission_state = "launch" {
 }
 
 IF mission_state = "inorbit" {
-    SET TARGET TO "Zelul's Shipwreck".
+    SET TARGET TO "Maxdin's Pod".
 
     mainframeBiImplusive().
 
     mainframeMatchVelocities().
     rendezvousApproach().
 
-    updateMissionState("at_target1").
+    updateMissionState("at_target3").
 } ELSE IF mission_state = "at_target1" {
     mainframeChangeApoapsis(150000, TIME + 240).
     mainframeCircularize().
