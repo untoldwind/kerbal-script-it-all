@@ -49,7 +49,7 @@ IF mission_state = "hi_orbit" {
     updateMissionState("in_orbit_dres").
 } ELSE IF mission_state = "in_orbit_dres" {
     SET TARGET to Kerbin.
-    mainframeInterplanetaryBiImpulsive(false).
+    mainframeInterplanetaryBiImpulsive(false, 2 * 7200000).
 
     updateMissionState("planed_return").
 }
