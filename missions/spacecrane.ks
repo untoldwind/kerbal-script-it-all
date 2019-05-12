@@ -1,5 +1,6 @@
 RUNONCEPATH("/mainframe/lib").
 RUNONCEPATH("/atmo/launch_ascent").
+RUNONCEPATH("/vac2/launch_ascent").
 RUNONCEPATH("/core/lib_warp").
 RUNONCEPATH("/vac2/lib").
 RUNONCEPATH("/rendezvous/lib").
@@ -10,17 +11,26 @@ SET STEERINGMANAGER:PITCHTS TO 4.
 
 mainframeEnsure().
 
-IF mission_state = "launch" {
+IF mission_state = "landed" {
     LIGHTS ON.
+    local DPort is dockChooseDeparturePort().
+
+    local TargetUndock is core:vessel.
+
+    if DPort <> 0 {
+        DPort:Undock(). 
+        wait 0.1.
+    }
+
     PRINT "Launch sequence".
-    atmoLaunchAscent(120000).
+    vacLaunchAscent(60000).
     mainframeCircularize().
 
-    updateMissionState("inorbit").
+    updateMissionState("inorbit_mun2").
 }
 
 IF mission_state = "inorbit" {
-    SET TARGET TO "Mission 91a Lander".
+    SET TARGET TO "Mission 85 Debris".
 
     mainframeBiImplusive().
     mainframeMatchVelocities().
@@ -34,7 +44,7 @@ IF mission_state = "at_target" {
 
     updateMissionState("docked").
 } ELSE IF mission_state = "docked" {
-    SET TARGET TO Minmus.
+    SET TARGET TO Mun.
 
     mainframeBiImplusive().
 
@@ -60,16 +70,16 @@ IF mission_state = "entered_munsoi" {
     updateMissionState("inorbit_mun").
 }
 
-IF mission_state = "inorbit_mun1" {
-    SET TARGET TO "Minmus Reactor".
+IF mission_state = "inorbit_mun" {
+    SET TARGET TO "Mun Reactor".
     LOCAL LandSite IS TARGET:GEOPOSITION.
     vacLand(LandSite:LAT, LandSite:LNG, true, -1, true).
 
     updateMissionState("landed").
 }
 
-IF mission_state = "inorbit_mun" {
-    SET TARGET TO "Minmus Station 1".
+IF mission_state = "inorbit_mun2" {
+    SET TARGET TO "Mun Station 1".
 
     mainframeBiImplusive().
     mainframeMatchVelocities().

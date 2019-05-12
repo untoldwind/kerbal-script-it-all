@@ -219,7 +219,7 @@ function dockChoosePorts {
   // Iterates through my ship ports and try to match with a port in target ship.
   if hisPort = 0 { 
     for myP in myPorts {
-      if myPort = 0 {
+      if myPort = 0 or myPort:NODETYPE < myP:NODETYPE {
         for hisP in hisPorts {
           if hisPort = 0 and hisP:NODETYPE = myP:NODETYPE {
             set myPort to myP.

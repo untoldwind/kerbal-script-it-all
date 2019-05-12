@@ -46,8 +46,8 @@ IF mission_state = "hi_orbit" {
     mainframeChangePeriapsis(600000, TIME + 240).
     mainframeCircularize().
 
-    updateMissionState("in_orbit_dres").
-} ELSE IF mission_state = "in_orbit_dres" {
+    updateMissionState("in_orbit_duna").
+} ELSE IF mission_state = "in_orbit_duna" {
     SET TARGET to Kerbin.
     mainframeInterplanetaryBiImpulsive(false, 2 * 7200000).
 
