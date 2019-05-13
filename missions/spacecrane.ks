@@ -30,7 +30,7 @@ IF mission_state = "landed" {
 }
 
 IF mission_state = "inorbit" {
-    SET TARGET TO "Mission 85 Debris".
+    SET TARGET TO "Mission 93 Base".
 
     mainframeBiImplusive().
     mainframeMatchVelocities().
@@ -64,15 +64,16 @@ IF mission_state = "corrected_transit" {
 }
 
 IF mission_state = "entered_munsoi" {
-    mainframeChangePeriapsis(60000).
+    mainframeChangePeriapsis(100000).
     mainframeCircularize().
 
     updateMissionState("inorbit_mun").
 }
 
 IF mission_state = "inorbit_mun" {
-    SET TARGET TO "Mun Reactor".
-    LOCAL LandSite IS TARGET:GEOPOSITION.
+    LOCAL LandSite IS WAYPOINT("Minmus Landing"):GEOPOSITION.
+//    SET TARGET TO "Mun Landing".
+//    LOCAL LandSite IS TARGET:GEOPOSITION.
     vacLand(LandSite:LAT, LandSite:LNG, true, -1, true).
 
     updateMissionState("landed").

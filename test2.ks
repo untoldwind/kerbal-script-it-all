@@ -22,3 +22,6 @@ rendezvousDock().
 //planeSwitchAtmo().
 
 //mainframeChangeInclination(0, TIME + 240).
+
+LOCAL LandSite IS WAYPOINT("Minmus Landing"):GEOPOSITION.
+vacLand(LandSite:LAT, LandSite:LNG, true, -1).
