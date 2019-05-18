@@ -38,8 +38,39 @@ IF mission_state = "inorbit" {
 } ELSE IF mission_state = "in_transit" {
     mainframeTransfer().
 
+    updateMissionState("transfered").
+} ELSE IF mission_state = "transfered" {
     mainframeChangePeriapsis(80000000).
+
+    updateMissionState("corrected").
+} ELSE IF mission_state = "corrected" {
     mainframeCircularize().
 
     updateMissionState("in_orbit_jool").
+} ELSE IF mission_state = "in_orbit_jool" {
+    SET target to Vall.
+
+    mainframeBiImplusive().
+
+    updateMissionState("intransit_vall").
 }
+
+IF mission_state = "intransit_vall" {
+    mainframeCorrectTargetPeriapsis(150000).
+
+    updateMissionState("corrected_transit").
+}
+
+IF mission_state = "corrected_transit" {
+    mainframeTransfer().
+
+    updateMissionState("entered_vallsoi").
+}
+
+IF mission_state = "entered_vallsoi" {
+    mainframeCircularizeIn(ETA:PERIAPSIS).
+
+    updateMissionState("inorbit_vall").
+}
+
+

@@ -5,16 +5,18 @@ RUNONCEPATH("/vac2/lib").
 RUNONCEPATH("/rendezvous/dock").
 RUNONCEPATH("/plane/lib").
 
-//SET TARGET TO "Minmus Station 1".
+atmoLaunchAscent(100000).
 
-//mainframeBiImplusive().
-//mainframeMatchVelocities().
 
 //vacLaunchAscent(30000, 90).
-//mainframeCircularize().
+mainframeCircularize().
 
 //SET TARGET to Duna.
 //mainframeInterplanetaryBiImpulsive(false).
+
+SET TARGET TO "Kerbin Station 1".
+mainframeBiImplusive().
+mainframeMatchVelocities().
 
 rendezvousDock().
 
@@ -22,6 +24,3 @@ rendezvousDock().
 //planeSwitchAtmo().
 
 //mainframeChangeInclination(0, TIME + 240).
-
-LOCAL LandSite IS WAYPOINT("Minmus Landing"):GEOPOSITION.
-vacLand(LandSite:LAT, LandSite:LNG, true, -1).

@@ -10,6 +10,17 @@ function mainframeCircularize {
     mainframeExecNode().
 }
 
+function mainframeCircularizeIn {
+    parameter eta IS true.
+
+    uiConsole("MAINFRAME", "CircularizeIn").
+    utilRemoveNodes().
+    ADD ADDONS:MainFrame:MANEUVERS:CIRCULARIZE_AT(TIME + eta).
+    WAIT 0.
+
+    mainframeExecNode().
+}
+
 function mainframeMatchPlanes {
     uiConsole("MAINFRAME", "Match planes").
     if not HASTARGET {

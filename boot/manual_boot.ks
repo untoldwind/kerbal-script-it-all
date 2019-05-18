@@ -1,5 +1,4 @@
-LOCAL modules IS List("core", "mainframe", "vac2").
-LOCAL mission IS "mission95".
+LOCAL modules IS List("core", "mainframe", "atmo", "vac2", "rendezvous").
 
 function bootConsole {
   parameter msg.
@@ -19,12 +18,13 @@ IF SHIP:STATUS = "PRELAUNCH" {
 
     brakes on. // Useful for planes
 
-    runpath("0:/compile", modules, mission).
+    runpath("0:/compile", modules).
 } ELSE IF HOMECONNECTION:ISCONNECTED {
     bootConsole("Connected, performing update ...").
-    runpath("0:/compile", modules, mission).
+    runpath("0:/compile", modules).
 } ELSE {
     bootConsole("No connection will continue with stored version").
 }
 bootConsole(round(core:volume:freespace/1024, 1) + "/" + round(core:volume:capacity/1024) + " kB free").
-runpath("/mission_ui", mission).
+
+runpath("/manual_ui").

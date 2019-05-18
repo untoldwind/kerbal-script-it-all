@@ -19,7 +19,7 @@ IF mission_state = "transfer_out" {
     updateMissionState("hi_orbit").
 }
 
-IF mission_state = "planed" {
+IF mission_state = "hi_orbit" {
     SET TARGET to Eve.
     mainframeInterplanetaryBiImpulsive(false).
 

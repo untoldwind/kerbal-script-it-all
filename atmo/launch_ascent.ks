@@ -45,7 +45,7 @@ function atmoLaunchAscent {
 			LOCAL apoPercent is SHIP:ORBIT:APOAPSIS / targetApoapsis.
 			LOCAL apoCompensation is 0.
 			if apoPercent > 0.9 set apoCompensation to (apoPercent - 0.9) * 10.
-			return 1.05 - MIN(1, MAX(0, apoCompensation)).
+			return 1 - MIN(0.5, MAX(0, apoCompensation)).
 		}
 	}
 

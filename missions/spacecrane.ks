@@ -18,7 +18,7 @@ IF mission_state = "landed" {
     local TargetUndock is core:vessel.
 
     if DPort <> 0 {
-        DPort:Undock(). 
+//        DPort:Undock(). 
         wait 0.1.
     }
 
@@ -26,11 +26,11 @@ IF mission_state = "landed" {
     vacLaunchAscent(60000).
     mainframeCircularize().
 
-    updateMissionState("inorbit_mun2").
+    updateMissionState("undocked").
 }
 
 IF mission_state = "inorbit" {
-    SET TARGET TO "Mission 93 Base".
+    SET TARGET TO "Kerbin Station 1".
 
     mainframeBiImplusive().
     mainframeMatchVelocities().
@@ -71,9 +71,9 @@ IF mission_state = "entered_munsoi" {
 }
 
 IF mission_state = "inorbit_mun" {
-    LOCAL LandSite IS WAYPOINT("Minmus Landing"):GEOPOSITION.
-//    SET TARGET TO "Mun Landing".
-//    LOCAL LandSite IS TARGET:GEOPOSITION.
+//    LOCAL LandSite IS WAYPOINT("Mun Landing"):GEOPOSITION.
+    SET TARGET TO "Mun Landing".
+    LOCAL LandSite IS TARGET:GEOPOSITION.
     vacLand(LandSite:LAT, LandSite:LNG, true, -1, true).
 
     updateMissionState("landed").
