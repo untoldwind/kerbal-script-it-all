@@ -33,7 +33,7 @@ IF mission_state = "transfer_to_kerbin" {
 } ELSE IF mission_state = "kerbin_high_orbit" {
     mainframeExecNode().
 
-    SET TARGET to Duna.
+    SET TARGET to Dres.
     mainframeInterplanetaryBiImpulsive(false).
 
     updateMissionState("planed").
@@ -59,19 +59,5 @@ IF mission_state = "transfer_to_kerbin" {
     mainframeChangePeriapsis(600000).
     mainframeCircularize().
 
-    updateMissionState("in_orbit_duna").
-} ELSE IF mission_state = "in_orbit_duna" {
-    SET TARGET TO Ike.
-
-    mainframeBiImplusive().
-    mainframeTransfer().
-    mainframeChangePeriapsis(50000, TIME + 240).
-    mainframeChangeApoapsis(50000, TIME + ETA:PERIAPSIS).
-
-    updateMissionState("inorbit_ike").
-} ELSE IF mission_state = "inorbit_ike" {
-    LOCAL LandSite IS WAYPOINT("Ike Landing"):GEOPOSITION.
-    vacLand(LandSite:LAT, LandSite:LNG, true, 1).
-
-    updateMissionState("landed").
+    updateMissionState("in_orbit_dres").
 }

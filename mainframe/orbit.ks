@@ -134,6 +134,9 @@ function mainframeChangeApoapsis {
         WAIT 0.
 
         mainframeExecNode().
+    } ELSE IF ADDONS:AVAILABLE("KAC") {
+        SET alarm TO addAlarm("ManeuverAuto", TIME:SECONDS + NEXTNODE:ETA - 600, ship:NAME, "Change apoapsis").
+        SET alarm:MARGIN TO 600.
     }
 }
 
@@ -150,6 +153,9 @@ function mainframeChangePeriapsis {
         WAIT 0.
 
         mainframeExecNode().
+    } ELSE IF ADDONS:AVAILABLE("KAC") {
+        SET alarm TO addAlarm("ManeuverAuto", TIME:SECONDS + NEXTNODE:ETA - 600, ship:NAME, "Change periapsis").
+        SET alarm:MARGIN TO 600.
     }
 }
 
