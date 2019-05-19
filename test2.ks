@@ -5,18 +5,18 @@ RUNONCEPATH("/vac2/lib").
 RUNONCEPATH("/rendezvous/dock").
 RUNONCEPATH("/plane/lib").
 
-atmoLaunchAscent(100000).
+//atmoLaunchAscent(100000).
 
 
 //vacLaunchAscent(30000, 90).
-mainframeCircularize().
+//mainframeCircularize().
 
 //SET TARGET to Duna.
 //mainframeInterplanetaryBiImpulsive(false).
 
-SET TARGET TO "Kerbin Station 1".
-mainframeBiImplusive().
-mainframeMatchVelocities().
+//SET TARGET TO "Kerbin Station 1".
+//mainframeBiImplusive().
+//mainframeMatchVelocities().
 
 rendezvousDock().
 

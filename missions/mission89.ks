@@ -52,4 +52,23 @@ IF mission_state = "hi_orbit" {
     mainframeInterplanetaryBiImpulsive(false, 2 * 7200000).
 
     updateMissionState("planed_return").
+} ELSE IF mission_state = "planed_return" {
+    mainframeExecNode().
+
+    updateMissionState("exit_back").
+} ELSE IF mission_state = "exit_back" {
+    mainframeCorrectTargetPeriapsis(200000, false).
+
+    updateMissionState("in_transit_back").
+} ELSE IF mission_state = "in_transit_back" {
+    mainframeExecNode().
+
+    updateMissionState("corrected_back").
+} ELSE IF mission_state = "corrected_back" {
+    mainframeTransfer().
+
+    mainframeChangePeriapsis(200000).
+    mainframeCircularize().
+
+    updateMissionState("back_at_kerbin").
 }

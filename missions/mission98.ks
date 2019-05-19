@@ -14,7 +14,7 @@ IF mission_state = "launch" {
 }
 
 IF mission_state = "in_orbit_minmus" {
-    mainframeReturnFromMoon(60000000).
+    mainframeReturnFromMoon(90000).
 
     updateMissionState("transfer_to_kerbin").
 }
@@ -22,18 +22,17 @@ IF mission_state = "in_orbit_minmus" {
 IF mission_state = "transfer_to_kerbin" {
     mainframeTransfer().
 
-    mainframeChangeApoapsis(60000000, TIME + ETA:PERIAPSIS, False).
+    mainframeChangePeriapsis(90000, TIME + ETA:APOAPSIS, False).
 
-    updateMissionState("kerbin_high_orbit_prep").
-} ELSE IF mission_state = "kerbin_high_orbit_prep" {
+    updateMissionState("kerbin_low_orbit_prep").
+} ELSE IF mission_state = "kerbin_low_orbit_prep" {
     mainframeExecNode().
 
-    mainframeChangePeriapsis(60000000, TIME + ETA:APOAPSIS, False).
-    updateMissionState("kerbin_high_orbit").
-} ELSE IF mission_state = "kerbin_high_orbit" {
-    mainframeExecNode().
+    mainframeChangeApoapsis(90000, TIME + ETA:PERIAPSIS, False).
 
-    SET TARGET to Eve.
+    updateMissionState("kerbin_low_orbit").
+} ELSE IF mission_state = "kerbin_low_orbit" {
+    SET TARGET to Duna.
     mainframeInterplanetaryBiImpulsive(false).
 
     updateMissionState("planed").
@@ -42,11 +41,11 @@ IF mission_state = "transfer_to_kerbin" {
 
     updateMissionState("leaving_soi").
 } ELSE IF mission_state = "leaving_soi" {
-    mainframeTransfer().
+//    mainframeTransfer().
 
     updateMissionState("soi_exit").
 } ELSE IF mission_state = "soi_exit" {
-    mainframeCorrectTargetPeriapsis(600000, false).
+    mainframeCorrectTargetPeriapsis(200000, false).
 
     updateMissionState("correction_planed").
 } ELSE IF mission_state = "correction_planed" {
@@ -56,7 +55,7 @@ IF mission_state = "transfer_to_kerbin" {
 } ELSE IF mission_state = "in_transit" {
     mainframeTransfer().
 
-    mainframeChangePeriapsis(600000).
+    mainframeChangePeriapsis(200000).
     mainframeCircularize().
 
     updateMissionState("in_orbit_dres").
