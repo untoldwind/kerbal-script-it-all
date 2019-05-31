@@ -59,4 +59,14 @@ IF mission_state = "transfer_to_kerbin" {
     mainframeCircularize().
 
     updateMissionState("in_orbit_dres").
+} ELSE IF mission_state = "in_orbit_dres" {
+    mainframeChangePeriapsis(90000, TIME + ETA:APOAPSIS).
+    mainframeChangeApoapsis(90000, TIME + ETA:PERIAPSIS).
+
+    updateMissionState("in_orbit_duna_low").
+} ELSE IF mission_state = "in_orbit_duna_low" {
+    LOCAL LandSite IS WAYPOINT("Duna Landing"):GEOPOSITION.
+    vacLand(LandSite:LAT, LandSite:LNG, true, 1).
+
+    updateMissionState("landed").
 }

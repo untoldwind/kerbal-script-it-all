@@ -4,7 +4,7 @@ RUNONCEPATH("/plane/lib").
 mainframeEnsure().
 
 IF mission_state = "launch" {
-    planeLaunchSSTO(85000).
+    planeLaunchSSTO(90000).
     mainframeCircularize().
 
     updateMissionState("inorbit").
@@ -40,6 +40,13 @@ IF mission_state = "deployed" {
 }
 
 IF mission_state = "separated" {
+  mainframeChangePeriapsis(75000, TIME + ETA:APOAPSIS).
+  mainframeChangeApoapsis(75000, TIME + ETA:PERIAPSIS).
+
+  updateMissionState("low_orbit").
+}
+
+IF mission_state = "low_orbit" {
     planeDeorbit().
     planeAerobrake().
     planeLand().

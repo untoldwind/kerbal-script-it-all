@@ -14,7 +14,7 @@ IF mission_state = "launch" {
 }
 
 IF mission_state = "in_orbit_minmus" {
-    mainframeReturnFromMoon(50000000).
+    mainframeReturnFromMoon(55000000).
 
     updateMissionState("transfer_to_kerbin").
 }
@@ -22,16 +22,16 @@ IF mission_state = "in_orbit_minmus" {
 IF mission_state = "transfer_to_kerbin" {
     mainframeTransfer().
 
-    mainframeChangePeriapsis(50000000, TIME + ETA:APOAPSIS, False).
+    mainframeChangePeriapsis(55000000, TIME + ETA:APOAPSIS, False).
 
-    updateMissionState("kerbin_low_orbit_prep").
-} ELSE IF mission_state = "kerbin_low_orbit_prep" {
+    updateMissionState("kerbin_hi_orbit_prep").
+} ELSE IF mission_state = "kerbin_hi_orbit_prep" {
     mainframeExecNode().
 
     mainframeChangeApoapsis(50000000, TIME + ETA:PERIAPSIS, False).
 
-    updateMissionState("kerbin_low_orbit").
-} ELSE IF mission_state = "kerbin_low_orbit" {
+    updateMissionState("kerbin_hi_orbit").
+} ELSE IF mission_state = "kerbin_hi_orbit" {
     SET TARGET to Jool.
     mainframeInterplanetaryBiImpulsive(false).
 

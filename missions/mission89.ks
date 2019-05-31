@@ -71,4 +71,43 @@ IF mission_state = "hi_orbit" {
     mainframeCircularize().
 
     updateMissionState("back_at_kerbin").
+} ELSE IF mission_state = "back_at_kerbin" {
+    SET TARGET TO Minmus.
+    mainframeBiImplusive().
+
+    updateMissionState("intransit_mun").
+}
+
+IF mission_state = "intransit_mun" {
+    mainframeCorrectTargetPeriapsis(100000).
+
+    updateMissionState("corrected_transit_mun").
+}
+
+IF mission_state = "corrected_transit_mun" {
+    mainframeTransfer().
+
+    updateMissionState("entered_munsoi").
+}
+
+IF mission_state = "entered_munsoi" {
+    mainframeChangePeriapsis(70000).
+    mainframeCircularize().
+
+    updateMissionState("inorbit_mun").
+}
+
+IF mission_state = "inorbit_mun" {
+    SET TARGET TO "Minmus Station 1".
+
+    mainframeMatchPlanes().
+    mainframeHohmann().
+
+    updateMissionState("intransit_station_mun").
+}
+
+IF mission_state = "intransit_station_mun" {
+    mainframeMatchVelocities().
+
+    updateMissionState("neartarget_station_mun").
 }

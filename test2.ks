@@ -14,9 +14,9 @@ RUNONCEPATH("/plane/lib").
 //SET TARGET to Duna.
 //mainframeInterplanetaryBiImpulsive(false).
 
-//SET TARGET TO "Kerbin Station 1".
+// SET TARGET TO "Minmus Station 1".
 //mainframeBiImplusive().
-//mainframeMatchVelocities().
+// mainframeMatchVelocities().
 
 rendezvousDock().
 

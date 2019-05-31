@@ -57,4 +57,31 @@ IF mission_state = "in_orbit_back" {
     mainframeMatchVelocities().
   
     updateMissionState("at_mothership").
+} ELSE IF mission_state = "at_mothership" {
+    mainframeChangePeriapsis(90000).
+    mainframeChangeApoapsis(90000, TIME + ETA:PERIAPSIS).
+
+    updateMissionState("low_orbit_home").
+} ELSE IF mission_state = "low_orbit_home" {
+    SAS on.
+	SET NAVMODE TO "SURFACE".
+
+	WAIT 5.
+	
+	SET SASMODE TO "RETROGRADE".
+
+    SET THROTTLE TO 1.
+
+    LIST ENGINES IN remaining_engines.
+
+    WAIT UNTIL remaining_engines[0]:FLAMEOUT.
+
+    UNTIL STAGE:NUMBER = 0 {
+        WAIT UNTIL STAGE:READY.
+        STAGE.
+    }
+
+    partsRetractAntennas().
+    partsRetractSolarPanels().
+    updateMissionState("done").
 }
