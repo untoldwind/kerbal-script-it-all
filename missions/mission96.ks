@@ -60,4 +60,18 @@ IF mission_state = "transfer_to_kerbin" {
     mainframeCircularize().
 
     updateMissionState("in_orbit_eve").
+} ELSE IF mission_state = "in_orbit_eve" {
+    SET TARGET TO Gilly.
+
+    mainframeBiImplusive().
+    mainframeCorrectTargetPeriapsis(20000).
+    mainframeTransfer().
+    mainframeChangePeriapsis(20000).
+    mainframeCircularize().
+
+    updateMissionState("inorbit_gilly").
+} ELSE IF mission_state = "inorbit_gilly" {
+    vacLand(0, 0, true, 1).
+
+    updateMissionState("landed").
 }

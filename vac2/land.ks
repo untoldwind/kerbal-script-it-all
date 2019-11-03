@@ -113,6 +113,7 @@ function vacCourseCorrection {
     uiConsole("VACLAND", "Course Correction").
 
     LOCAL desiredSite TO LandingSite.
+    UNLOCK all.
     LOCK predictedBreakTime TO addons:mainframe:landing:predicted_break_time.
     LOCK courseCorrection TO addons:mainframe:landing:COURSE_CORRECTION_DETLAV(true).
     LOCK predictedSite TO addons:mainframe:landing:predicted_site.
@@ -150,7 +151,8 @@ function vacDecelerationBurn {
     SET ThrottlePID:SETPOINT TO 0. 
 
     LOCAL VELAT IS VELOCITYAT(SHIP, addons:mainframe:landing:predicted_break_time):ORBIT.
-    LOCAL steerDir IS LOOKDIRUP(-VELAT, POSITIONAT(SHIP, addons:mainframe:landing:predicted_break_time) - BODY:POSITION).
+    LOCAL steerDir TO LOOKDIRUP(-VELAT, POSITIONAT(SHIP, addons:mainframe:landing:predicted_break_time) - BODY:POSITION).
+    UNLOCK all.
     LOCK STEERING TO steerDir.
     LOCAL throttleVal is 0.
     LOCK THROTTLE to throttleVal.
@@ -201,6 +203,7 @@ function vacBreakZero {
     uiConsole("VACLAND", "Break zero").
     local accel is SHIP:availablethrust / SHIP:mass.
 
+    UNLOCK all.
     lock steerDir to lookdirup(-SHIP:velocity:surface:normalized, ship:facing:upvector).
     lock steering to steerDir.
     wait until utilIsShipFacing(steerDir:vector, 10, 1) or landRadarAltimeter() < 300.
@@ -227,6 +230,7 @@ function vacTouchdown {
     SET ThrottlePID:SETPOINT TO 0. 
 
     LOCAL steerDir IS SHIP:RETROGRADE.
+    UNLOCK all.
     LOCK STEERING TO steerDir.
     LOCAL throttleVal is 0.
     LOCK THROTTLE to throttleVal.

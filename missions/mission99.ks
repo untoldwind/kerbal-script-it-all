@@ -45,7 +45,7 @@ IF mission_state = "transfer_to_kerbin" {
 
     updateMissionState("soi_exit").
 } ELSE IF mission_state = "soi_exit" {
-    mainframeCorrectTargetPeriapsis(200000, false).
+    mainframeCorrectTargetPeriapsis(50000000, false).
 
     updateMissionState("correction_planed").
 } ELSE IF mission_state = "correction_planed" {
@@ -55,7 +55,7 @@ IF mission_state = "transfer_to_kerbin" {
 } ELSE IF mission_state = "in_transit" {
     mainframeTransfer().
 
-    mainframeChangePeriapsis(200000).
+    mainframeChangePeriapsis(50000000).
     mainframeCircularize().
 
     updateMissionState("in_orbit_dres").

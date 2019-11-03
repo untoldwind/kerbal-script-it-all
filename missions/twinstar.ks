@@ -4,7 +4,7 @@ RUNONCEPATH("/plane/lib").
 mainframeEnsure().
 
 IF mission_state = "launch" {
-    planeLaunchSSTO(90000).
+    planeLaunchSSTO(95000).
     mainframeCircularize().
 
     updateMissionState("inorbit").
